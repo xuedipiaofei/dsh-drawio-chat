@@ -15,9 +15,15 @@
 - `pnpm typecheck` 通过；`pnpm test` 4 个测试文件 / 6 个用例通过；`pnpm build` 通过（lib/index.js 0.94 kB、lib/client.js 1.94 kB）。
 - host health 路由 `GET /api/dsh-drawio-inline/health` 由 host-apply 测试覆盖；client 仅注册 locale 字典。
 
+## MVP 已实现（2026-11-06，第二提交）
+- Host 工具 `drawio_diagram`（XML 校验 + 写 `<cwd>/diagrams/<slug>-<hash>.drawio` + presentationMeta）与 `drawio_reference`（远程 mcp.draw.io 参考，失败回退内置精简参考）。
+- Client toolview `drawio_diagram`：sandboxed `srcdoc` iframe 内用 draw.io 官方 viewer-static 渲染；卡片含「下载 .drawio」「在 draw.io 打开」「放大/缩小」；opaque origin，不接触 GUI 源。
+- 渲染方案实测结论：直接 iframe `viewer.diagrams.net` 在 headless 中不渲染；改为 **srcdoc + data-mxgraph + viewer-static（script 在 div 之后、设 mxBasePath）** 成功渲染（见 `.harness/assets/viewer-sandbox-proof.png`）；`#R` 链接格式为 `encodeURIComponent(base64(deflateRaw(encodeURIComponent(xml))))`（与官方 MCP 返回链接一致）。
+- 验证：typecheck 通过；`pnpm test` 6 文件 / 14 用例通过；`pnpm build` 通过（host 9.93 kB、client 13.83 kB）。
+
 ## 下一步
-1. 用户确认渲染方案（A 本地 vendor viewer ~10–14MB / B 远程 viewer iframe ~1MB）与 MCP 角色（仅增强 reference/search / 核心 / 不接）。
-2. host 工具 `drawio_diagram`：mermaid/xml → 校验 → 落盘 `<ws>/diagrams/*.drawio` → presentationMeta。
-3. client toolview：本地/远程 viewer 内联渲染 + 下载/打开 draw.io。
-4. 可选 MCP 客户端（get_drawio_reference/search_shapes）。
-5. 发布材料（README 双语、market entry、PUBLISHING、第三方许可）。
+1. mermaid 输入：需要浏览器端 mermaid→drawio 转换；官方 drawio-mermaid 依赖 EditorUi（viewer 不带），下一版评估离线转换或让模型先调 drawio_reference 写 XML。
+2. 可选：把 viewer-static 脚本 vendor 进包（约 5MB）做离线渲染；当前依赖 viewer.diagrams.net（无账号）。
+3. `*.drawio` 侧栏 tab（打开/预览工作区文件）与 SVG/PNG 导出。
+4. 本地安装到 desktop profile 真机验证（App 独占 profile，需退出 App）。
+5. 发布材料：README 双语已完成初稿；market entry、PUBLISHING、第三方许可声明待补。

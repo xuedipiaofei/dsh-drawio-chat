@@ -30,7 +30,8 @@
     "client": {
       "inject": [
         "@deepseek-ai/dsh-client-locale",
-        "@deepseek-ai/dsh-client-ui-renderer"
+        "@deepseek-ai/dsh-client-ui-renderer",
+        "@deepseek-ai/dsh-client-ui-tool"
       ],
       "platform": "web"
     }
@@ -79,13 +80,25 @@
     "icon.svg",
     "locale"
   ],
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/xuedipiaofei/dsh-drawio-inline.git"
   },
   "homepage": "https://github.com/xuedipiaofei/dsh-drawio-inline",
-  "bugs": { "url": "https://github.com/xuedipiaofei/dsh-drawio-inline/issues" },
-  "keywords": ["dsh", "dsh-plugin", "deepseek-harness", "drawio", "draw.io", "diagram", "flowchart"]
+  "bugs": {
+    "url": "https://github.com/xuedipiaofei/dsh-drawio-inline/issues"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "drawio",
+    "draw.io",
+    "diagram",
+    "flowchart"
+  ]
 }

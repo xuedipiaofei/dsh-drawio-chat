@@ -10,7 +10,7 @@ import { name, inject } from '../src/index.ts'
 describe('bundle contract', () => {
   it('exposes the stable cordis identity', () => {
     expect(name).toBe('drawio-inline')
-    expect(inject).toEqual(['webServer'])
+    expect(inject).toEqual(['webServer', 'tools'])
   })
 
   it('declares the bundle patch and the web client half', () => {
