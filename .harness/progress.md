@@ -26,6 +26,7 @@
 - 发布材料齐：market/index.json（format 1）、market/awesome-entry.yml、PUBLISHING.md（npm/GitHub/两个市场）、CHANGELOG.md、.github/workflows/publish.yml（OIDC trusted publishing）、双语 README 安装段、本地安装脚本（--dry-run/--uninstall）。
 - 安装脚本 dry-run 通过；`npm pack --dry-run` 通过（20.8 kB tarball / 66.2 kB unpacked）。
 - 验证：typecheck、6 文件 / 15 用例、build 全部通过。
+- 真机安装验证待用户执行：desktop profile 由 App 独占，需要 ⌘Q 后运行 `scripts/install-into-desktop-profile.mjs`；脚本已 dry-run 通过。
 
 ## 下一步
 1. mermaid 输入：需要浏览器端 mermaid→drawio 转换；官方 drawio-mermaid 依赖 EditorUi（viewer 不带），下一版评估离线转换或让模型先调 drawio_reference 写 XML。
