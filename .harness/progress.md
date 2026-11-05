@@ -43,6 +43,12 @@
 - undo 快照抽到 `src/model/undo.ts`（SnapshotStore，每文件 8 版），工具层只做调用。
 - 验证：12 文件 / 45 用例；typecheck/build 通过；headless 验证 SVG（1251 字节、无 script）与 PNG（2400×1600、84,368 字节、无 taint）；`npm pack --dry-run` = 46.3 kB tarball / 159.9 kB unpacked / 24 files。
 
+## 0.2.1（右侧栏 .drawio 预览，2026-11-06）
+- 用户反馈：点开 .drawio 时右栏显示原始 XML（内置文本预览）。
+- 新增 `.drawio` 侧栏 tab：extension 优先级 + pattern `**/*.drawio`；解析 `dsh-resource://file/session/<id>/<rel>`，经 loopback-only `/api/dsh-drawio-chat/open`（host 侧用 sessions.get(id).header.cwd 解析工作区根）读取文件，内联渲染；3s 轮询 + 手动刷新；下载/SVG/PNG/在 draw.io 打开。
+- 客户端 inject 增加 `sidebarRightTabs` 与 `@deepseek-ai/dsh-client-ui-sidebar-right`；注册失败只 warn，不影响工具卡片。
+- 验证：13 文件 / 49 用例；typecheck/build 待本轮收尾执行。
+
 ## 下一步
 1. mermaid 输入：需要浏览器端 mermaid→drawio 转换；官方 drawio-mermaid 依赖 EditorUi（viewer 不带），下一版评估离线转换或让模型先调 drawio_reference 写 XML。
 2. 可选：把 viewer-static 脚本 vendor 进包（约 5MB）做离线渲染；当前依赖 viewer.diagrams.net（无账号）。

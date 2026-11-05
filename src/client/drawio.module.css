@@ -55,3 +55,37 @@
 .status { margin: 0; padding: 18px 8px; text-align: center; color: var(--dsw-alias-label-tertiary); font-size: 12px; }
 .error { margin: 0; color: var(--dsw-alias-state-error-primary); font-size: 12px; }
 .path { margin: 0; color: var(--dsw-alias-label-caption); font-family: var(--ds-font-family-code); font-size: 10.5px; overflow-wrap: anywhere; }
+
+/* Sidebar tab body: full-height viewer with a thin action bar. */
+.sidebarBody {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--dsw-alias-bg-base);
+  color: var(--dsw-alias-label-primary);
+  font-family: var(--dsw-font-family);
+}
+.sidebarBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 0.5px solid var(--dsw-alias-border-l1);
+  flex: none;
+}
+.sidebarName {
+  font-size: 12px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sidebarFrame {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  border: none;
+  display: block;
+  background: #ffffff;
+}

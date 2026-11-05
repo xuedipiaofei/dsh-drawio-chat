@@ -28,4 +28,4 @@ node scripts/install-into-desktop-profile.mjs
 
 ## 验证
 
-`pnpm typecheck`、`pnpm test`（12 文件 / 45 用例）、`pnpm build` 通过；内联渲染用 headless Chrome 截图验证（`.harness/assets/viewer-sandbox-proof.png`）；SVG 与 PNG 导出都在 headless Chrome 里做了端到端验证（PNG：2400×1600 画布、84,368 字节、无 canvas taint）。
+`pnpm typecheck`、`pnpm test`（13 文件 / 49 用例）、`pnpm build` 通过；内联渲染用 headless Chrome 截图验证（`.harness/assets/viewer-sandbox-proof.png`）；SVG 与 PNG 导出都在 headless Chrome 里做了端到端验证（PNG：2400×1600 画布、84,368 字节、无 canvas taint）。

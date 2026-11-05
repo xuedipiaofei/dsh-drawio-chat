@@ -6,7 +6,7 @@ The **chat-first** draw.io plugin for DeepSeek Harness: the model calls `drawio_
 - Rendering happens inside a **sandboxed iframe** (opaque origin), so model-generated XML never touches the GUI origin.
 - `drawio_reference` fetches draw.io's official XML reference from `https://mcp.draw.io/mcp` (no auth); **the diagram itself is never uploaded**, with a built-in condensed fallback.
 - The card offers "Download .drawio", "Export SVG" and "Open in draw.io" (app.diagrams.net link).
-- **v0.2 shipped**: `drawio_read` (structure by id/geometry/style + revision), `drawio_apply` (batch semantic ops, atomic write, revision-conflict guard) and `drawio_undo` (last 8 versions). Read/apply/undo cards read the touched file back through the plugin's loopback-only preview route and render it inline; PNG export (2×) works too — see [docs/design-v0.2.md](docs/design-v0.2.md).
+- **v0.2 shipped**: clicking a `.drawio` file now opens an interactive diagram tab in the right sidebar (no more raw XML); `drawio_read` (structure by id/geometry/style + revision), `drawio_apply` (batch semantic ops, atomic write, revision-conflict guard) and `drawio_undo` (last 8 versions). Read/apply/undo cards read the touched file back through the plugin's loopback-only preview route and render it inline; PNG export (2×) works too — see [docs/design-v0.2.md](docs/design-v0.2.md).
 
 ## Install
 
@@ -28,4 +28,4 @@ Restart the app, then ask the model to "draw a login flow diagram": it calls `dr
 
 ## Verification
 
-`pnpm typecheck`, `pnpm test` (12 files / 45 tests) and `pnpm build` pass; inline rendering was verified with a headless-browser screenshot (`.harness/assets/viewer-sandbox-proof.png`), and SVG/PNG export were verified end-to-end in headless Chrome (PNG: 2400×1600 canvas, 84,368 bytes, no canvas taint).
+`pnpm typecheck`, `pnpm test` (13 files / 49 tests) and `pnpm build` pass; inline rendering was verified with a headless-browser screenshot (`.harness/assets/viewer-sandbox-proof.png`), and SVG/PNG export were verified end-to-end in headless Chrome (PNG: 2400×1600 canvas, 84,368 bytes, no canvas taint).

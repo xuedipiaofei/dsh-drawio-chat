@@ -13,6 +13,7 @@ import type {} from '@deepseek-ai/dsh-client-ui-slots'
 import { createElement } from 'react'
 import { DrawioCallView } from './DrawioCallView.tsx'
 import { DrawioFileCard, type FileCardMode } from './DrawioFileCard.tsx'
+import { SidebarDiagram } from './SidebarDiagram.tsx'
 import { TOOL_NAME } from './contract.ts'
 import { en, zh, type DrawioKey } from './locales.ts'
 
@@ -27,7 +28,18 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
 }
 
 /** Required services (the runtime must be up first). */
-export const inject = ['locale', 'slots']
+export const inject = ['locale', 'slots', 'sidebarRightTabs']
+
+/** Identity of the sidebar tab implementation. */
+export const SIDEBAR_TAB_ID = 'dsh-drawio-chat/viewer'
+
+/** Sidebar tab kind served by this plugin (claims *.drawio files). */
+export const SIDEBAR_TAB_KIND = 'drawio-chat-diagram'
+
+/** Structural view of the sidebar tab registry service. */
+interface SidebarTabRegistryFace {
+  register: (definition: Record<string, unknown>) => () => void
+}
 
 /** Structural view of the slot registry service. */
 interface SlotRegistryFace {
@@ -48,6 +60,32 @@ export function apply(ctx: ClientContext): void {
       return () => {}
     }
   }, 'drawio-chat: dictionaries')
+
+  // Sidebar tab: without this the built-in text preview opens the raw XML.
+  ctx.effect(() => {
+    try {
+      const tabs = (ctx as unknown as { sidebarRightTabs: SidebarTabRegistryFace }).sidebarRightTabs
+      const slots = (ctx as unknown as { slots: SlotRegistryFace }).slots
+      const disposers: Array<() => void> = [
+        tabs.register({
+          id: SIDEBAR_TAB_ID,
+          kind: SIDEBAR_TAB_KIND,
+          patterns: ['**/*.drawio'],
+          priority: 'extension',
+          title: (address: string) => {
+            const parts = address.split('/')
+            const last = parts[parts.length - 1] ?? ''
+            try { return decodeURIComponent(last) || 'draw.io' } catch { return last || 'draw.io' }
+          },
+        }),
+        slots.inject('sidebar.right.pane.tab', () => slots.register({ name: 'sidebar.right.pane.tab', key: SIDEBAR_TAB_ID }, SidebarDiagram)),
+      ]
+      return () => { for (const dispose of disposers) dispose() }
+    } catch (error) {
+      console.warn('[drawio-chat] sidebar tab registration failed:', error)
+      return () => {}
+    }
+  }, 'drawio-chat: sidebar tab')
 
   ctx.effect(() => {
     try {

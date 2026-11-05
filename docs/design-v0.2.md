@@ -77,6 +77,10 @@ any write; a failure leaves the file untouched.
   an offscreen canvas — no host image dependency.
 - Security: viewer still renders in a sandboxed `srcdoc` iframe (`allow-scripts`,
   no `allow-same-origin`); SVG export is sanitized before download.
+- 0.2.1: a `*.drawio` sidebar tab (extension priority) replaces the built-in
+  text preview. It resolves `dsh-resource://file/session/<id>/<rel>`, asks the
+  host `/api/dsh-drawio-chat/open` route for the file (session cwd resolved
+  host-side), and re-polls while visible so `drawio_apply` updates the tab.
 
 ## 4. Deliberately out of scope
 

@@ -42,6 +42,8 @@ export const ROUTES = {
   health: '/api/dsh-drawio-chat/health',
   /** Same-origin preview feed for the chat cards (allowlisted files only). */
   diagram: '/api/dsh-drawio-chat/diagram',
+  /** Sidebar tab feed: resolve a workspace-relative path in a session's cwd. */
+  open: '/api/dsh-drawio-chat/open',
 } as const
 
 /** Tool names shared with the browser half's tool views. */
@@ -100,6 +102,30 @@ async function resolveCwd(ctx: Context, exec: { agent?: unknown; signal?: unknow
     }
   }
   return process.cwd()
+}
+
+/** One optional host service face (cordis `ctx.get`), used to avoid hard injects. */
+function optionalService(ctx: Context, name: string): unknown {
+  const faces = ctx as unknown as { get?: (service: string) => unknown; [key: string]: unknown }
+  try {
+    const fetched = typeof faces.get === 'function' ? faces.get(name) : undefined
+    if (fetched !== undefined) return fetched
+  } catch {
+    // fall through to the direct property
+  }
+  try {
+    return faces[name]
+  } catch {
+    return undefined
+  }
+}
+
+/** Resolve the immutable workspace root of a session, for sidebar file reads. */
+function workspaceRootOf(ctx: Context, sessionId: string): string | undefined {
+  const sessions = optionalService(ctx, 'sessions') as { get?: (id: string) => unknown } | undefined
+  const session = typeof sessions?.get === 'function' ? sessions.get(sessionId) as { header?: { cwd?: unknown } } | undefined : undefined
+  const cwd = session?.header?.cwd
+  return typeof cwd === 'string' && cwd !== '' ? cwd : undefined
 }
 
 /** kebab-ish file slug for a diagram title. */
@@ -295,6 +321,50 @@ export function apply(ctx: Context): void {
       }
     },
   }), 'drawio-chat: diagram route')
+
+  // Sidebar tab feed: a dsh-resource://file/session/<id>/<rel> tab address is
+  // translated into the session's workspace, so the tab can preview .drawio
+  // files without the built-in text preview.
+  ctx.effect(() => ctx.webServer.register({
+    kind: 'exact',
+    path: ROUTES.open,
+    handler: (req: IncomingMessage, res: ServerResponse) => {
+      const writeError = (status: number, message: string): void => {
+        res.writeHead(status, { 'content-type': 'application/json', 'cache-control': 'no-store' })
+        res.end(JSON.stringify({ error: message }))
+      }
+      if (req.method !== 'GET') {
+        writeError(405, 'method not allowed')
+        return
+      }
+      const remote = req.socket.remoteAddress ?? ''
+      if (!(remote === '127.0.0.1' || remote === '::1' || remote === '::ffff:127.0.0.1')) {
+        writeError(403, 'preview route is loopback-only')
+        return
+      }
+      const url = new URL(req.url ?? '/', 'http://127.0.0.1')
+      const sessionId = url.searchParams.get('session') ?? ''
+      const relative = url.searchParams.get('path') ?? ''
+      if (sessionId === '' || relative === '') {
+        writeError(400, 'session and path are required')
+        return
+      }
+      const root = workspaceRootOf(ctx, sessionId)
+      if (root === undefined) {
+        writeError(404, 'session not found')
+        return
+      }
+      try {
+        const absolute = resolveDiagramPath(relative, root)
+        const content = readDiagramFile(absolute)
+        knownFiles.add(absolute)
+        res.writeHead(200, { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' })
+        res.end(content)
+      } catch (error) {
+        writeError(404, error instanceof Error ? error.message : 'diagram not found')
+      }
+    },
+  }), 'drawio-chat: open route')
 
   const tools = (ctx as unknown as { tools: { register(definition: ToolDefinition): unknown } }).tools
 

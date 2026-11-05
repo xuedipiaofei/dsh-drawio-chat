@@ -21,7 +21,11 @@ function fakeHost(tmp: string): { ctx: never; routes: Array<{ path: string; hand
   const ctx = {
     webServer: { register: vi.fn((route: (typeof routes)[number]) => { routes.push(route); return () => {} }) },
     tools: { register: vi.fn((definition: RegisteredTool) => { tools.push(definition); return () => {} }) },
-    get: vi.fn((name: string) => name === 'workingDirectory' ? { ensure: async () => tmp } : undefined),
+    get: vi.fn((name: string) => {
+      if (name === 'workingDirectory') return { ensure: async () => tmp }
+      if (name === 'sessions') return { get: (id: string) => id === 'sess-1' ? { header: { cwd: tmp } } : undefined }
+      return undefined
+    }),
     effect: vi.fn((fn: () => unknown) => { fn() }),
   } as never
   return { ctx, routes, tools }
@@ -42,7 +46,7 @@ describe('host apply', () => {
     try {
       const host = fakeHost(tmp)
       apply(host.ctx)
-      expect(host.routes.map(route => route.path)).toEqual([ROUTES.health, ROUTES.diagram])
+      expect(host.routes.map(route => route.path)).toEqual([ROUTES.health, ROUTES.diagram, ROUTES.open])
       expect(host.tools.map(registered => registered.name)).toEqual([
         TOOL_NAMES.create,
         TOOL_NAMES.read,
@@ -162,6 +166,34 @@ describe('host apply', () => {
       expect(request(`/api/dsh-drawio-chat/diagram?path=${encodeURIComponent('/etc/passwd')}`).status).toBe(403)
       expect(request(`/api/dsh-drawio-chat/diagram?path=${encodeURIComponent(created.path)}`, 'POST').status).toBe(405)
       expect(request(`/api/dsh-drawio-chat/diagram?path=${encodeURIComponent(created.path)}`, 'GET', '10.0.0.9').status).toBe(403)
+    } finally {
+      rmSync(tmp, { recursive: true, force: true })
+    }
+  })
+
+  it('serves a session-relative file for the sidebar tab', async () => {
+    const tmp = mkdtempSync(join(tmpdir(), 'drawio-chat-'))
+    try {
+      const host = fakeHost(tmp)
+      apply(host.ctx)
+      const created = await tool(host, TOOL_NAMES.create).execute({ title: 'Login flow', xml: NODE_XML }, { agent: {} }) as { path: string }
+      const relative = created.path.slice(tmp.length + 1)
+      const route = host.routes.find(candidate => candidate.path === ROUTES.open)!
+      const request = (url: string, remote = '127.0.0.1') => {
+        const state = { status: 0, body: '' }
+        const res = {
+          writeHead(status: number) { state.status = status },
+          end(body: string) { state.body = body },
+        } as unknown as ServerResponse
+        route.handler({ method: 'GET', url, socket: { remoteAddress: remote } } as unknown as IncomingMessage, res)
+        return state
+      }
+      const ok = request(`/api/dsh-drawio-chat/open?session=sess-1&path=${encodeURIComponent(relative)}`)
+      expect(ok.status).toBe(200)
+      expect(ok.body).toBe(NODE_XML)
+      expect(request(`/api/dsh-drawio-chat/open?session=missing&path=${encodeURIComponent(relative)}`).status).toBe(404)
+      expect(request(`/api/dsh-drawio-chat/open?session=sess-1&path=${encodeURIComponent('../escape.drawio')}`).status).toBe(404)
+      expect(request(`/api/dsh-drawio-chat/open?session=sess-1&path=${encodeURIComponent(relative)}`, '10.0.0.9').status).toBe(403)
     } finally {
       rmSync(tmp, { recursive: true, force: true })
     }

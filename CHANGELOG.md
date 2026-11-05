@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.2.1 — 2026-11-06
+
+- New `*.drawio` sidebar tab: clicking a diagram in the chat / file tree opens
+  an interactive draw.io viewer in the right sidebar instead of the built-in
+  text preview (which showed raw XML). The tab resolves
+  `dsh-resource://file/session/<id>/<rel>` addresses, reads the file through the
+  plugin's loopback-only `/api/dsh-drawio-chat/open` route (session cwd is
+  resolved host-side), polls for changes, and offers download / SVG / PNG /
+  open-in-draw.io actions.
+- Sidebar tab registers as an `extension` priority type with pattern
+  `**/*.drawio`, so it wins over the generic text preview for this extension.
+- 13 test files / 49 tests.
+
+
 ## 0.2.0 — 2026-11-06
 
 - New `src/model/` layer: dependency-free XML tree, `.drawio` carriers (bare

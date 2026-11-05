@@ -1,6 +1,6 @@
 {
   "name": "dsh-drawio-chat",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "draw.io diagrams inline in DeepSeek Harness: the agent composes a diagram, the chat renders an interactive draw.io viewer locally — no draw.io account, no npx server, no CDN.",
   "icon": "icon.svg",
   "type": "module",
@@ -31,7 +31,8 @@
       "inject": [
         "@deepseek-ai/dsh-client-locale",
         "@deepseek-ai/dsh-client-ui-renderer",
-        "@deepseek-ai/dsh-client-ui-tool"
+        "@deepseek-ai/dsh-client-ui-tool",
+        "@deepseek-ai/dsh-client-ui-sidebar-right"
       ],
       "platform": "web"
     }
