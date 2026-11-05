@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.2.0 — unreleased
+
+- New `src/model/` layer: dependency-free XML tree, `.drawio` carriers (bare
+  `mxGraphModel`, uncompressed `mxfile`, compressed diagram payloads), SHA-1
+  revision, workspace path policy, structure summary, semantic ops.
+- Renamed the creation tool to `drawio_create`; added `drawio_read` (ids,
+  labels, geometry, edges, revision), `drawio_apply` (batch ops — add/remove
+  nodes and edges, labels, styles, moves, z-order — atomic write + optional
+  `expectRevision` conflict guard) and `drawio_undo` (last 8 versions per file).
+- Interop test reads a real `.drawio` produced by `dsh-drawai`; unknown cells
+  (e.g. its wrapped metadata object) survive serialization.
+- Client cards for `drawio_read`/`drawio_apply` and PNG export are still todo.
+
+
 ## 0.1.0 — 2026-11-06
 
 Initial release.

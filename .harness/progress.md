@@ -33,6 +33,13 @@
 - 新增 [docs/design-v0.2.md](../dsh-drawio-chat/docs/design-v0.2.md)：聊天优先的读/改/预览闭环，工具 = drawio_create/read/apply/undo/reference；不做右侧画布。
 - typecheck / 15 tests / build 改名后全部通过。
 
+## v0.2 进度（2026-11-06）
+- 改名：仓库/包/cordis/路由/locale/安装脚本全部切到 `dsh-drawio-chat`；改名后 typecheck/test/build 通过。
+- M2 模型层完成：`src/model/xml.ts`（无依赖 XML 树，保留属性顺序/未知元素/注释）+ `src/model/diagram.ts`（bare mxGraphModel、未压缩/压缩 mxfile、revision、路径策略、结构摘要）+ `src/model/ops.ts`（addNode/addEdge/setLabel/setStyle/move/remove/order，批量）。
+- M3 工具完成：`drawio_create`（改名）/ `drawio_read`（结构摘要 + revision）/ `drawio_apply`（原子写 + expectRevision 冲突 + 批量 ops）/ `drawio_undo`（每文件 8 版）/ `drawio_reference`（MCP 参考）。路径限制在 session workspace 且只接受 `.drawio`。
+- 测试：10 文件 / 40 用例通过；含真实 `.drawio` 互操作 fixture（来自 dsh-drawai，MIT，已记入 NOTICE）。
+- 未完成：read/apply 的客户端卡片（需要通过受信路由/workspace-files 读回文件后内联渲染）、PNG 导出、发布材料版本号同步。
+
 ## 下一步
 1. mermaid 输入：需要浏览器端 mermaid→drawio 转换；官方 drawio-mermaid 依赖 EditorUi（viewer 不带），下一版评估离线转换或让模型先调 drawio_reference 写 XML。
 2. 可选：把 viewer-static 脚本 vendor 进包（约 5MB）做离线渲染；当前依赖 viewer.diagrams.net（无账号）。

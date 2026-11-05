@@ -10,7 +10,7 @@
  */
 
 /** Tool name shared by the host tool and the client tool view. */
-export const TOOL_NAME = 'drawio_diagram'
+export const TOOL_NAME = 'drawio_create'
 
 /** Public viewer/diagram host (script + stencils, no account required). */
 export const VIEWER_ORIGIN = 'https://viewer.diagrams.net'

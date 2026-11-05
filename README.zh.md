@@ -6,7 +6,7 @@ DeepSeek Harness 的**聊天优先** draw.io 插件：模型调用 `drawio_diagr
 - 渲染发生在 **sandbox iframe** 里（opaque origin，模型生成的 XML 不会接触 GUI 源）。
 - 参考文档工具 `drawio_reference` 从公开的 `https://mcp.draw.io/mcp` 取 draw.io 官方 XML 参考（无鉴权）；**图本身不上传**，取不到时回退内置精简参考。
 - 卡片提供「下载 .drawio」「导出 SVG」「在 draw.io 打开」（app.diagrams.net 链接）。
-- 路线：v0.2 起补 `drawio_read` / `drawio_apply` / `drawio_undo`，让模型在聊天里**读和改**已有 `.drawio`（不开右侧画布）；详见 [docs/design-v0.2.md](docs/design-v0.2.md)。
+- **v0.2 进行中**：`drawio_read`（按 id/坐标/样式读结构，返回 revision）、`drawio_apply`（结构化 ops 批量改图、原子写、revision 冲突保护）、`drawio_undo`（回退最近 8 版）已实现；客户端卡片与 PNG 导出待下一步；详见 [docs/design-v0.2.md](docs/design-v0.2.md)。
 
 ## 安装
 

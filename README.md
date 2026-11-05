@@ -6,7 +6,7 @@ The **chat-first** draw.io plugin for DeepSeek Harness: the model calls `drawio_
 - Rendering happens inside a **sandboxed iframe** (opaque origin), so model-generated XML never touches the GUI origin.
 - `drawio_reference` fetches draw.io's official XML reference from `https://mcp.draw.io/mcp` (no auth); **the diagram itself is never uploaded**, with a built-in condensed fallback.
 - The card offers "Download .drawio", "Export SVG" and "Open in draw.io" (app.diagrams.net link).
-- Roadmap: v0.2 adds `drawio_read` / `drawio_apply` / `drawio_undo` so the model can **read and edit** an existing `.drawio` in the conversation (no right-side canvas); see [docs/design-v0.2.md](docs/design-v0.2.md).
+- **v0.2 in progress**: `drawio_read` (structure by id/geometry/style + revision), `drawio_apply` (batch semantic ops, atomic write, revision-conflict guard) and `drawio_undo` (last 8 versions) are implemented host-side; client cards for read/apply and PNG export are next — see [docs/design-v0.2.md](docs/design-v0.2.md).
 
 ## Install
 

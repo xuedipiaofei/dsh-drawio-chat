@@ -17,4 +17,6 @@ draw.io diagrams in the chat transcript.
   package; it is fetched by the browser only when a diagram is shown.
 - The draw.io editor is opened at `https://app.diagrams.net` when the user clicks
   "Open in draw.io"; no draw.io account is required to view a diagram.
+- `tests/fixtures/dsh-drawai-demo.drawio` is a demo document produced by
+  `fourzkw/dsh-drawai` (MIT) and is used only as a read-interop test fixture.
 - Not affiliated with or endorsed by draw.io / diagrams.net or DeepSeek.
