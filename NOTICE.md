@@ -1,6 +1,6 @@
 # NOTICE
 
-`dsh-drawio-inline` is an independent DeepSeek Harness (DSH) plugin that renders
+`dsh-drawio-chat` is an independent DeepSeek Harness (DSH) plugin that renders
 draw.io diagrams in the chat transcript.
 
 - The build preset under `shared/` (`tsdown.client.ts`, `web-platform.ts`,

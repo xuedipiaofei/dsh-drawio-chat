@@ -9,7 +9,7 @@ import { name, inject } from '../src/index.ts'
 
 describe('bundle contract', () => {
   it('exposes the stable cordis identity', () => {
-    expect(name).toBe('drawio-inline')
+    expect(name).toBe('drawio-chat')
     expect(inject).toEqual(['webServer', 'tools'])
   })
 
@@ -18,11 +18,11 @@ describe('bundle contract', () => {
       name: string
       dsh: { bundle?: { patch?: string }; client?: { platform?: string } }
     }
-    expect(pkg.name).toBe('dsh-drawio-inline')
+    expect(pkg.name).toBe('dsh-drawio-chat')
     expect(pkg.dsh.bundle?.patch).toBe('./cordis.patch.yml')
     expect(pkg.dsh.client?.platform).toBe('web')
     const patch = readFileSync(join(process.cwd(), 'cordis.patch.yml'), 'utf8')
-    expect(patch).toContain('id: ui-drawio-inline')
-    expect(patch).toContain("name: 'dsh-drawio-inline'")
+    expect(patch).toContain('id: ui-drawio-chat')
+    expect(patch).toContain("name: 'dsh-drawio-chat'")
   })
 })

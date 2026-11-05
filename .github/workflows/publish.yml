@@ -32,9 +32,9 @@ jobs:
         id: published
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          if npm view "dsh-drawio-inline@$VERSION" version >/dev/null 2>&1; then
+          if npm view "dsh-drawio-chat@$VERSION" version >/dev/null 2>&1; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
-            echo "dsh-drawio-inline@$VERSION is already published; skipping publish."
+            echo "dsh-drawio-chat@$VERSION is already published; skipping publish."
           else
             echo "exists=false" >> "$GITHUB_OUTPUT"
           fi

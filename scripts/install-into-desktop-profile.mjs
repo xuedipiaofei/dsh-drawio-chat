@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Install / uninstall **dsh-drawio-inline** into the DSH desktop profile
+ * Install / uninstall **dsh-drawio-chat** into the DSH desktop profile
  * without the CLI.
  *
  * The desktop app owns `~/.dsh/profiles/desktop`: the standalone `dsh` CLI
@@ -25,7 +25,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import os from 'node:os'
 
-const PACKAGE = 'dsh-drawio-inline'
+const PACKAGE = 'dsh-drawio-chat'
 const args = new Set(process.argv.slice(2))
 const dryRun = args.has('--dry-run')
 const wantUninstall = args.has('--uninstall')

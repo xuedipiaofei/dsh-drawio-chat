@@ -1,5 +1,5 @@
 /**
- * Standalone tsdown config for the drawio-inline plugin.
+ * Standalone tsdown config for the drawio-chat plugin.
  *
  * Uses the repo's shared client-bundle preset (shared/tsdown.client.ts):
  * node-half lib/ (host scan + routes) plus the browser bundle lib/client.js
@@ -9,7 +9,7 @@
  */
 import { clientBundle } from './shared/tsdown.client.ts'
 
-export default clientBundle('dsh-drawio-inline', ['src/index.ts'], {
+export default clientBundle('dsh-drawio-chat', ['src/index.ts'], {
   libExternal: [
     '@deepseek-ai/dsh-client-locale',
     '@deepseek-ai/dsh-client-ui-slots',

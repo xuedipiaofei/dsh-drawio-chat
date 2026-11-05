@@ -31,7 +31,7 @@ const XML = '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></ro
 
 describe('host apply', () => {
   it('registers the health route and both tools', () => {
-    const tmp = mkdtempSync(join(tmpdir(), 'drawio-inline-'))
+    const tmp = mkdtempSync(join(tmpdir(), 'drawio-chat-'))
     try {
       const host = fakeHost(tmp)
       apply(host.ctx)
@@ -42,14 +42,14 @@ describe('host apply', () => {
       const res = { writeHead(status: number) { state.status = status }, end(body: string) { state.body = body } } as unknown as ServerResponse
       host.routes[0].handler({ method: 'GET' } as IncomingMessage, res)
       expect(state.status).toBe(200)
-      expect(JSON.parse(state.body)).toMatchObject({ ok: true, plugin: 'drawio-inline' })
+      expect(JSON.parse(state.body)).toMatchObject({ ok: true, plugin: 'drawio-chat' })
     } finally {
       rmSync(tmp, { recursive: true, force: true })
     }
   })
 
   it('writes the diagram into the workspace and reports its path', async () => {
-    const tmp = mkdtempSync(join(tmpdir(), 'drawio-inline-'))
+    const tmp = mkdtempSync(join(tmpdir(), 'drawio-chat-'))
     try {
       const host = fakeHost(tmp)
       apply(host.ctx)
@@ -66,7 +66,7 @@ describe('host apply', () => {
   })
 
   it('rejects non-drawio XML', async () => {
-    const tmp = mkdtempSync(join(tmpdir(), 'drawio-inline-'))
+    const tmp = mkdtempSync(join(tmpdir(), 'drawio-chat-'))
     try {
       const host = fakeHost(tmp)
       apply(host.ctx)

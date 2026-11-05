@@ -15,12 +15,12 @@ import { TOOL_NAME } from './contract.ts'
 import { en, zh, type DrawioKey } from './locales.ts'
 
 /** Locale namespace this plugin owns. */
-const NS = 'dsh-drawio-inline'
+const NS = 'dsh-drawio-chat'
 
 declare module '@deepseek-ai/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {
     /** draw.io inline surface copy. */
-    'dsh-drawio-inline': DrawioKey
+    'dsh-drawio-chat': DrawioKey
   }
 }
 
@@ -45,7 +45,7 @@ export function apply(ctx: ClientContext): void {
       // A locale failure must not take the whole web shell down.
       return () => {}
     }
-  }, 'drawio-inline: dictionaries')
+  }, 'drawio-chat: dictionaries')
 
   ctx.effect(() => {
     try {
@@ -53,8 +53,8 @@ export function apply(ctx: ClientContext): void {
       return slots.inject('tool.call.toolview', () => slots.register({ name: 'tool.call.toolview', key: TOOL_NAME }, DrawioCallView))
     } catch (error) {
       // Registration problems degrade the card to the generic tool row.
-      console.warn('[drawio-inline] tool view registration failed:', error)
+      console.warn('[drawio-chat] tool view registration failed:', error)
       return () => {}
     }
-  }, 'drawio-inline: tool view')
+  }, 'drawio-chat: tool view')
 }

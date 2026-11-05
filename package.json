@@ -1,5 +1,5 @@
 {
-  "name": "dsh-drawio-inline",
+  "name": "dsh-drawio-chat",
   "version": "0.1.0",
   "description": "draw.io diagrams inline in DeepSeek Harness: the agent composes a diagram, the chat renders an interactive draw.io viewer locally — no draw.io account, no npx server, no CDN.",
   "icon": "icon.svg",
@@ -86,11 +86,11 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xuedipiaofei/dsh-drawio-inline.git"
+    "url": "git+https://github.com/xuedipiaofei/dsh-drawio-chat.git"
   },
-  "homepage": "https://github.com/xuedipiaofei/dsh-drawio-inline",
+  "homepage": "https://github.com/xuedipiaofei/dsh-drawio-chat",
   "bugs": {
-    "url": "https://github.com/xuedipiaofei/dsh-drawio-inline/issues"
+    "url": "https://github.com/xuedipiaofei/dsh-drawio-chat/issues"
   },
   "keywords": [
     "dsh",

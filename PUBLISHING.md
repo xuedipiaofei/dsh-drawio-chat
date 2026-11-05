@@ -1,12 +1,12 @@
-# Publishing dsh-drawio-inline
+# Publishing dsh-drawio-chat
 
-The repo has the publishable package (`dsh-drawio-inline`), a market entry and
+The repo has the publishable package (`dsh-drawio-chat`), a market entry and
 an OIDC publish workflow. The steps below are the remaining user actions — the
 plugin has **not** been published anywhere yet.
 
 ## 1. GitHub repository
 
-1. Create `github.com/<you>/dsh-drawio-inline` (public).
+1. Create `github.com/<you>/dsh-drawio-chat` (public).
 2. Add the topic `dsh-plugin` (and `deepseek-harness`).
 3. Push this repository and tag the release: `git tag v0.1.0 && git push --tags`.
 

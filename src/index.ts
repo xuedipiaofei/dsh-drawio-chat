@@ -18,14 +18,14 @@ import type { Context } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-host-webserver'
 
 /** Stable cordis plugin name (matches the package name). */
-export const name = 'drawio-inline'
+export const name = 'drawio-chat'
 
 /** Host services this plugin needs before it can apply. */
 export const inject = ['webServer', 'tools']
 
 /** Route family served by this plugin. */
 export const ROUTES = {
-  health: '/api/dsh-drawio-inline/health',
+  health: '/api/dsh-drawio-chat/health',
 } as const
 
 /** Tool names shared with the browser half's tool views. */
@@ -165,7 +165,7 @@ async function loadReference(): Promise<string> {
     jsonrpc: '2.0',
     id: 1,
     method: 'initialize',
-    params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'dsh-drawio-inline', version: '0.1.0' } },
+    params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'dsh-drawio-chat', version: '0.1.0' } },
   })
   const sessionId = initialize.sessionId
   if (sessionId === undefined) throw new Error('the MCP server did not open a session')
@@ -199,7 +199,7 @@ export function apply(ctx: Context): void {
       res.writeHead(200, { 'content-type': 'application/json' })
       res.end(JSON.stringify({ ok: true, plugin: name }))
     },
-  }), 'drawio-inline: routes')
+  }), 'drawio-chat: routes')
 
   const tools = (ctx as unknown as { tools: { register(definition: ToolDefinition): unknown } }).tools
 

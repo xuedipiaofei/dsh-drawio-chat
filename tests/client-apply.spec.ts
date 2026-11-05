@@ -20,7 +20,7 @@ describe('client apply', () => {
   it('registers the locale dictionaries and the tool view', () => {
     const client = fakeClient()
     apply(client.ctx)
-    expect(client.localeRegister).toHaveBeenCalledWith('dsh-drawio-inline', expect.objectContaining({ zh: expect.any(Object), en: expect.any(Object) }))
+    expect(client.localeRegister).toHaveBeenCalledWith('dsh-drawio-chat', expect.objectContaining({ zh: expect.any(Object), en: expect.any(Object) }))
     expect(client.slotRegister).toHaveBeenCalledWith({ name: 'tool.call.toolview', key: 'drawio_diagram' }, expect.anything())
   })
 
