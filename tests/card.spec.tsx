@@ -26,6 +26,7 @@ describe('DrawioCallView', () => {
     expect(iframe?.getAttribute('srcdoc') ?? '').toContain('drawio-graph')
     const labels = Array.from(container.querySelectorAll('button')).map(button => button.textContent?.trim())
     expect(labels).toContain('下载 .drawio')
+    expect(labels).toContain('导出 SVG')
     expect(labels).toContain('在 draw.io 打开')
     act(() => { root.unmount() })
     container.remove()

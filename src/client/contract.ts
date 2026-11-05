@@ -18,6 +18,12 @@ export const VIEWER_ORIGIN = 'https://viewer.diagrams.net'
 /** Public editor used for "open in draw.io" (no account required to view). */
 export const EDITOR_ORIGIN = 'https://app.diagrams.net'
 
+/** Message the card posts into the viewer iframe to request an SVG export. */
+export const EXPORT_SVG_MESSAGE = 'dsh-drawio:export-svg'
+
+/** Message the viewer iframe posts back with the serialized SVG. */
+export const EXPORT_SVG_RESULT = 'dsh-drawio:svg'
+
 /** Diagram source read from one tool call. */
 export interface DiagramSource {
   /** Diagram title (from the tool argument). */
@@ -77,6 +83,21 @@ export async function editorUrl(xml: string): Promise<string> {
 }
 
 /**
+ * Strip executable content from viewer-produced SVG before handing it to the user.
+ * The SVG is model-driven, so it is downloaded only after this pass removes
+ * scripts, event-handler attributes and `javascript:` URLs.
+ * @param svg - serialized SVG markup.
+ * @returns sanitized SVG markup.
+ */
+export function sanitizeSvg(svg: string): string {
+  return svg
+    .replace(/<script[\s\S]*?<\/script>/giu, '')
+    .replace(/\son[a-z]+\s*=\s*"[^"]*"/giu, '')
+    .replace(/\son[a-z]+\s*=\s*'[^']*'/giu, '')
+    .replace(/javascript:/giu, '')
+}
+
+/**
  * Build the sandboxed viewer document rendered inside the chat card.
  *
  * The data is assigned through `setAttribute('data-mxgraph', JSON.stringify(...))`
@@ -98,5 +119,12 @@ var config={xml:${xmlLiteral},highlight:'#7aaaff',nav:true,resize:true,toolbar:'
 document.getElementById('drawio-graph').setAttribute('data-mxgraph', JSON.stringify(config));
 </script>
 <script src="${VIEWER_ORIGIN}/js/viewer-static.min.js"></script>
+<script>
+window.addEventListener('message', function (event) {
+  if (!event.data || event.data.type !== '${EXPORT_SVG_MESSAGE}') return;
+  var svg = document.querySelector('.mxgraph svg');
+  if (window.parent) window.parent.postMessage({ type: '${EXPORT_SVG_RESULT}', svg: svg ? svg.outerHTML : '' }, '*');
+});
+</script>
 </body></html>`
 }

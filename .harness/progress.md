@@ -21,6 +21,12 @@
 - 渲染方案实测结论：直接 iframe `viewer.diagrams.net` 在 headless 中不渲染；改为 **srcdoc + data-mxgraph + viewer-static（script 在 div 之后、设 mxBasePath）** 成功渲染（见 `.harness/assets/viewer-sandbox-proof.png`）；`#R` 链接格式为 `encodeURIComponent(base64(deflateRaw(encodeURIComponent(xml))))`（与官方 MCP 返回链接一致）。
 - 验证：typecheck 通过；`pnpm test` 6 文件 / 14 用例通过；`pnpm build` 通过（host 9.93 kB、client 13.83 kB）。
 
+## 收尾（2026-11-06，第三提交）
+- 新增「导出 SVG」：卡片 → iframe postMessage 取回 viewer 渲染的 SVG → 父页面消毒（去 script/on* handler/javascript:）→ 下载；headless Chrome 端到端验证（1251 字节 SVG、无 `<script>`）。
+- 发布材料齐：market/index.json（format 1）、market/awesome-entry.yml、PUBLISHING.md（npm/GitHub/两个市场）、CHANGELOG.md、.github/workflows/publish.yml（OIDC trusted publishing）、双语 README 安装段、本地安装脚本（--dry-run/--uninstall）。
+- 安装脚本 dry-run 通过；`npm pack --dry-run` 通过（20.8 kB tarball / 66.2 kB unpacked）。
+- 验证：typecheck、6 文件 / 15 用例、build 全部通过。
+
 ## 下一步
 1. mermaid 输入：需要浏览器端 mermaid→drawio 转换；官方 drawio-mermaid 依赖 EditorUi（viewer 不带），下一版评估离线转换或让模型先调 drawio_reference 写 XML。
 2. 可选：把 viewer-static 脚本 vendor 进包（约 5MB）做离线渲染；当前依赖 viewer.diagrams.net（无账号）。

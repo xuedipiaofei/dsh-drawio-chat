@@ -1,7 +1,7 @@
 /** Diagram source extraction and the viewer/editor document builders. */
 import { inflateRawSync } from 'node:zlib'
 import { describe, expect, it } from 'vitest'
-import { buildViewerHtml, editorUrl, readDiagramSource } from '../src/client/contract.ts'
+import { buildViewerHtml, editorUrl, readDiagramSource, sanitizeSvg } from '../src/client/contract.ts'
 
 const XML = '<mxGraphModel><root><mxCell id="0"/></root></mxGraphModel>'
 
@@ -29,6 +29,7 @@ describe('buildViewerHtml', () => {
     const html = buildViewerHtml('<mxGraphModel><script>alert(1)</script></mxGraphModel>')
     expect(html).toContain('data-mxgraph')
     expect(html).toContain('/js/viewer-static.min.js')
+    expect(html).toContain('dsh-drawio:export-svg')
     expect(html).not.toContain('<script>alert(1)</script>')
     expect(html).toContain('\\u003cscript')
   })
@@ -36,8 +37,19 @@ describe('buildViewerHtml', () => {
   it('escapes the closing-tag sequence in the XML literal', () => {
     const html = buildViewerHtml(XML)
     expect(html).toContain('drawio-graph')
-    expect(html.match(/<\/script>/gu)?.length).toBe(2)
+    expect(html.match(/<\/script>/gu)?.length).toBe(3)
     expect(html).toContain('\\u003cmxGraphModel')
+  })
+})
+
+describe('sanitizeSvg', () => {
+  it('removes scripts, event handlers and javascript: URLs', () => {
+    const dirty = '<svg><script>alert(1)</script><rect onclick="steal()" fill="red"/><a href="javascript:go()">x</a></svg>'
+    const clean = sanitizeSvg(dirty)
+    expect(clean).not.toContain('<script')
+    expect(clean).not.toContain('onclick')
+    expect(clean).not.toContain('javascript:')
+    expect(clean).toContain('<rect')
   })
 })
 

@@ -8,6 +8,8 @@ export const zh = {
   'drawio.renderFailed': '图表渲染失败：{error}',
   'drawio.openInDrawio': '在 draw.io 打开',
   'drawio.download': '下载 .drawio',
+  'drawio.exportSvg': '导出 SVG',
+  'drawio.exportFailed': 'SVG 导出失败。',
   'drawio.expand': '放大',
   'drawio.collapse': '缩小',
 } as const
@@ -21,6 +23,8 @@ export const en: Record<DrawioKey, string> = {
   'drawio.renderFailed': 'Failed to render the diagram: {error}',
   'drawio.openInDrawio': 'Open in draw.io',
   'drawio.download': 'Download .drawio',
+  'drawio.exportSvg': 'Export SVG',
+  'drawio.exportFailed': 'SVG export failed.',
   'drawio.expand': 'Expand',
   'drawio.collapse': 'Shrink',
 }

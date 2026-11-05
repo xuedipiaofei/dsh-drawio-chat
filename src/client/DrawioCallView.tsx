@@ -7,8 +7,8 @@
  * diagram source comes from the model, so it never runs with access to the GUI
  * origin. Nothing is fetched from the plugin except the public viewer origin.
  */
-import { useEffect, useMemo, useState } from 'react'
-import { buildViewerHtml, EDITOR_ORIGIN, editorUrl, readDiagramSource, type DiagramSource } from './contract.ts'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { buildViewerHtml, EDITOR_ORIGIN, editorUrl, EXPORT_SVG_MESSAGE, EXPORT_SVG_RESULT, readDiagramSource, sanitizeSvg, type DiagramSource } from './contract.ts'
 import { tt } from './panel-helpers.ts'
 import css from './drawio.module.css'
 
@@ -41,6 +41,7 @@ export function DrawioCallView({ phase, block }: DrawioCallViewProps): React.JSX
   const [viewerHtml, setViewerHtml] = useState<string | undefined>(undefined)
   const [error, setError] = useState<string | undefined>(undefined)
   const [expanded, setExpanded] = useState(false)
+  const frameRef = useRef<HTMLIFrameElement | null>(null)
 
   useEffect(() => {
     if (source === undefined) return
@@ -63,6 +64,31 @@ export function DrawioCallView({ phase, block }: DrawioCallViewProps): React.JSX
     setTimeout(() => { URL.revokeObjectURL(anchor.href) }, 1000)
   }
 
+  /** Ask the viewer iframe for its SVG and download the sanitized result. */
+  const exportSvg = (): void => {
+    frameRef.current?.contentWindow?.postMessage({ type: EXPORT_SVG_MESSAGE }, '*')
+  }
+
+  useEffect(() => {
+    const onMessage = (event: MessageEvent): void => {
+      const data = event.data as { type?: string; svg?: string } | null
+      if (data === null || data.type !== EXPORT_SVG_RESULT || event.source !== frameRef.current?.contentWindow) return
+      const svg = typeof data.svg === 'string' ? sanitizeSvg(data.svg) : ''
+      if (svg.trim() === '') {
+        setError(tt('drawio.exportFailed'))
+        return
+      }
+      const blob = new Blob([svg], { type: 'image/svg+xml' })
+      const anchor = document.createElement('a')
+      anchor.href = URL.createObjectURL(blob)
+      anchor.download = `${(source?.title ?? 'diagram').replace(/[^\w.-]+/gu, '-') || 'diagram'}.svg`
+      anchor.click()
+      setTimeout(() => { URL.revokeObjectURL(anchor.href) }, 1000)
+    }
+    window.addEventListener('message', onMessage)
+    return () => { window.removeEventListener('message', onMessage) }
+  }, [source])
+
   const open = (): void => {
     if (source === undefined) return
     editorUrl(source.xml)
@@ -79,6 +105,7 @@ export function DrawioCallView({ phase, block }: DrawioCallViewProps): React.JSX
         {source !== undefined && (
           <>
             <button type="button" className={css.action} onClick={download}>{tt('drawio.download')}</button>
+            <button type="button" className={css.action} onClick={exportSvg}>{tt('drawio.exportSvg')}</button>
             <button type="button" className={css.action} onClick={open}>{tt('drawio.openInDrawio')}</button>
             <button type="button" className={css.action} onClick={() => { setExpanded(value => !value) }}>
               {expanded ? tt('drawio.collapse') : tt('drawio.expand')}
@@ -94,6 +121,7 @@ export function DrawioCallView({ phase, block }: DrawioCallViewProps): React.JSX
             ? <p className={css.status}>{tt('drawio.rendering')}</p>
             : (
                 <iframe
+                  ref={frameRef}
                   className={css.frame}
                   title={source.title}
                   srcDoc={viewerHtml}
