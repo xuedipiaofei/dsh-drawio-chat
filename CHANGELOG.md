@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0 — unreleased
+## 0.2.0 — 2026-11-06
 
 - New `src/model/` layer: dependency-free XML tree, `.drawio` carriers (bare
   `mxGraphModel`, uncompressed `mxfile`, compressed diagram payloads), SHA-1
@@ -11,7 +11,14 @@
   `expectRevision` conflict guard) and `drawio_undo` (last 8 versions per file).
 - Interop test reads a real `.drawio` produced by `dsh-drawai`; unknown cells
   (e.g. its wrapped metadata object) survive serialization.
-- Client cards for `drawio_read`/`drawio_apply` and PNG export are still todo.
+- Client cards for `drawio_read`/`drawio_apply`/`drawio_undo`: the result card
+  reads the touched file back through the plugin's loopback-only, allowlisted
+  `/api/dsh-drawio-chat/diagram` route and renders it with the same sandboxed
+  draw.io viewer (no XML echoed through the session log).
+- PNG export (2×) in addition to SVG: the card rasterizes the sanitized viewer
+  SVG through a canvas. Blob URLs taint the canvas for SVG in Chromium, so the
+  raster source is a `data:` URL (verified in headless Chrome: 84,368-byte PNG).
+- Version 0.2.0.
 
 
 ## 0.1.0 — 2026-11-06

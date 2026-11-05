@@ -10,7 +10,9 @@ import type { Context as ClientContext } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-client-locale/client'
 // Type-only: pulls the ctx.slots merge and the locale namespace table.
 import type {} from '@deepseek-ai/dsh-client-ui-slots'
+import { createElement } from 'react'
 import { DrawioCallView } from './DrawioCallView.tsx'
+import { DrawioFileCard, type FileCardMode } from './DrawioFileCard.tsx'
 import { TOOL_NAME } from './contract.ts'
 import { en, zh, type DrawioKey } from './locales.ts'
 
@@ -50,11 +52,21 @@ export function apply(ctx: ClientContext): void {
   ctx.effect(() => {
     try {
       const slots = (ctx as unknown as { slots: SlotRegistryFace }).slots
-      return slots.inject('tool.call.toolview', () => slots.register({ name: 'tool.call.toolview', key: TOOL_NAME }, DrawioCallView))
+      const disposers: Array<() => void> = []
+      const register = (key: string, component: unknown): void => {
+        disposers.push(slots.inject('tool.call.toolview', () => slots.register({ name: 'tool.call.toolview', key }, component)))
+      }
+      register(TOOL_NAME, DrawioCallView)
+      const fileCard = (mode: FileCardMode) => (props: { phase?: 'preparing' | 'start' | 'result'; block?: unknown }) =>
+        createElement(DrawioFileCard, { mode, phase: props.phase, block: props.block as never })
+      register('drawio_read', fileCard('read'))
+      register('drawio_apply', fileCard('apply'))
+      register('drawio_undo', fileCard('undo'))
+      return () => { for (const dispose of disposers) dispose() }
     } catch (error) {
       // Registration problems degrade the card to the generic tool row.
       console.warn('[drawio-chat] tool view registration failed:', error)
       return () => {}
     }
-  }, 'drawio-chat: tool view')
+  }, 'drawio-chat: tool views')
 }

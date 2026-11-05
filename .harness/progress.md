@@ -38,7 +38,10 @@
 - M2 模型层完成：`src/model/xml.ts`（无依赖 XML 树，保留属性顺序/未知元素/注释）+ `src/model/diagram.ts`（bare mxGraphModel、未压缩/压缩 mxfile、revision、路径策略、结构摘要）+ `src/model/ops.ts`（addNode/addEdge/setLabel/setStyle/move/remove/order，批量）。
 - M3 工具完成：`drawio_create`（改名）/ `drawio_read`（结构摘要 + revision）/ `drawio_apply`（原子写 + expectRevision 冲突 + 批量 ops）/ `drawio_undo`（每文件 8 版）/ `drawio_reference`（MCP 参考）。路径限制在 session workspace 且只接受 `.drawio`。
 - 测试：10 文件 / 40 用例通过；含真实 `.drawio` 互操作 fixture（来自 dsh-drawai，MIT，已记入 NOTICE）。
-- 未完成：read/apply 的客户端卡片（需要通过受信路由/workspace-files 读回文件后内联渲染）、PNG 导出、发布材料版本号同步。
+- M4 完成：read/apply/undo 卡片通过 loopback-only + allowlist 的 `/api/dsh-drawio-chat/diagram` 路由读回 `.drawio` 并内联渲染（不把 XML 回显进会话）；PNG 导出（canvas 光栅化，blob URL 会污染 canvas，实测改用 data: URL）；create 卡片接入同一个导出 hook。
+- 版本 0.2.0：package.json、CHANGELOG、market/index.json、README 验证数字同步。
+- undo 快照抽到 `src/model/undo.ts`（SnapshotStore，每文件 8 版），工具层只做调用。
+- 验证：12 文件 / 45 用例；typecheck/build 通过；headless 验证 SVG（1251 字节、无 script）与 PNG（2400×1600、84,368 字节、无 taint）；`npm pack --dry-run` = 46.3 kB tarball / 159.9 kB unpacked / 24 files。
 
 ## 下一步
 1. mermaid 输入：需要浏览器端 mermaid→drawio 转换；官方 drawio-mermaid 依赖 EditorUi（viewer 不带），下一版评估离线转换或让模型先调 drawio_reference 写 XML。

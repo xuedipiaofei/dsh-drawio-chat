@@ -42,7 +42,7 @@ describe('host apply', () => {
     try {
       const host = fakeHost(tmp)
       apply(host.ctx)
-      expect(host.routes.map(route => route.path)).toEqual([ROUTES.health])
+      expect(host.routes.map(route => route.path)).toEqual([ROUTES.health, ROUTES.diagram])
       expect(host.tools.map(registered => registered.name)).toEqual([
         TOOL_NAMES.create,
         TOOL_NAMES.read,
@@ -135,6 +135,33 @@ describe('host apply', () => {
       expect(undone.restored).toBe(true)
       expect(readFileSync(created.path, 'utf8')).toBe(before)
       await expect(tool(host, TOOL_NAMES.undo).execute({}, { agent: {} })).rejects.toThrow(/no recorded version/u)
+    } finally {
+      rmSync(tmp, { recursive: true, force: true })
+    }
+  })
+
+  it('serves allowlisted diagram files through the loopback preview route only', async () => {
+    const tmp = mkdtempSync(join(tmpdir(), 'drawio-chat-'))
+    try {
+      const host = fakeHost(tmp)
+      apply(host.ctx)
+      const created = await tool(host, TOOL_NAMES.create).execute({ title: 'Login flow', xml: NODE_XML }, { agent: {} }) as { path: string }
+      const route = host.routes.find(candidate => candidate.path === ROUTES.diagram)!
+      const request = (url: string, method = 'GET', remote = '127.0.0.1') => {
+        const state = { status: 0, body: '', headers: {} as Record<string, string> }
+        const res = {
+          writeHead(status: number, headers?: Record<string, string>) { state.status = status; if (headers !== undefined) state.headers = headers },
+          end(body: string) { state.body = body },
+        } as unknown as ServerResponse
+        route.handler({ method, url, socket: { remoteAddress: remote } } as unknown as IncomingMessage, res)
+        return state
+      }
+      const ok = request(`/api/dsh-drawio-chat/diagram?path=${encodeURIComponent(created.path)}`)
+      expect(ok.status).toBe(200)
+      expect(ok.body).toBe(NODE_XML)
+      expect(request(`/api/dsh-drawio-chat/diagram?path=${encodeURIComponent('/etc/passwd')}`).status).toBe(403)
+      expect(request(`/api/dsh-drawio-chat/diagram?path=${encodeURIComponent(created.path)}`, 'POST').status).toBe(405)
+      expect(request(`/api/dsh-drawio-chat/diagram?path=${encodeURIComponent(created.path)}`, 'GET', '10.0.0.9').status).toBe(403)
     } finally {
       rmSync(tmp, { recursive: true, force: true })
     }

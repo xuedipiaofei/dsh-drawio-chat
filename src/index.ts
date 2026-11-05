@@ -29,6 +29,7 @@ import {
   type DiagramSummary,
 } from './model/diagram.ts'
 import { applyOps, type DiagramOp } from './model/ops.ts'
+import { SnapshotStore } from './model/undo.ts'
 
 /** Stable cordis plugin name (matches the package name). */
 export const name = 'drawio-chat'
@@ -39,6 +40,8 @@ export const inject = ['webServer', 'tools']
 /** Route family served by this plugin. */
 export const ROUTES = {
   health: '/api/dsh-drawio-chat/health',
+  /** Same-origin preview feed for the chat cards (allowlisted files only). */
+  diagram: '/api/dsh-drawio-chat/diagram',
 } as const
 
 /** Tool names shared with the browser half's tool views. */
@@ -56,14 +59,11 @@ const MCP_URL = 'https://mcp.draw.io/mcp'
 /** Guard rails for files this plugin reads or writes. */
 const MAX_XML_BYTES = 2 * 1024 * 1024
 
-/** Keep this many previous versions per file for `drawio_undo`. */
-const UNDO_DEPTH = 8
-
 /** The most recent diagram path per session workspace. */
 const lastByCwd = new Map<string, string>()
 
-/** Previous serialized content per absolute path (most recent last). */
-const snapshots = new Map<string, string[]>()
+/** Previous serialized content per absolute path for `drawio_undo`. */
+const snapshots = new SnapshotStore(8)
 
 /** Files this process created/read/applied — used by the upcoming preview route. */
 const knownFiles = new Set<string>()
@@ -130,14 +130,6 @@ function readDiagramFile(path: string): string {
   const content = readFileSync(path, 'utf8')
   if (Buffer.byteLength(content, 'utf8') > MAX_XML_BYTES) throw new DiagramError(`diagram file exceeds ${MAX_XML_BYTES} bytes`)
   return content
-}
-
-/** Remember the previous version of a file for undo. */
-function remember(path: string, content: string): void {
-  const stack = snapshots.get(path) ?? []
-  stack.push(content)
-  if (stack.length > UNDO_DEPTH) stack.splice(0, stack.length - UNDO_DEPTH)
-  snapshots.set(path, stack)
 }
 
 /** Resolve the target file from an explicit path or the session's latest file. */
@@ -266,7 +258,43 @@ export function apply(ctx: Context): void {
       res.writeHead(200, { 'content-type': 'application/json' })
       res.end(JSON.stringify({ ok: true, plugin: name }))
     },
-  }), 'drawio-chat: routes')
+  }), 'drawio-chat: health route')
+
+  // The cards read back the file the tools touched through this same-origin
+  // route. Access is limited to loopback callers (the local DSH web/GUI) and to
+  // files this process created or opened, so it is not a general file endpoint.
+  ctx.effect(() => ctx.webServer.register({
+    kind: 'exact',
+    path: ROUTES.diagram,
+    handler: (req: IncomingMessage, res: ServerResponse) => {
+      const writeError = (status: number, message: string): void => {
+        res.writeHead(status, { 'content-type': 'application/json', 'cache-control': 'no-store' })
+        res.end(JSON.stringify({ error: message }))
+      }
+      if (req.method !== 'GET') {
+        writeError(405, 'method not allowed')
+        return
+      }
+      const remote = req.socket.remoteAddress ?? ''
+      if (!(remote === '127.0.0.1' || remote === '::1' || remote === '::ffff:127.0.0.1')) {
+        writeError(403, 'preview route is loopback-only')
+        return
+      }
+      const url = new URL(req.url ?? '/', 'http://127.0.0.1')
+      const path = url.searchParams.get('path') ?? ''
+      if (path === '' || !knownFiles.has(path) || !/\.drawio$/iu.test(path)) {
+        writeError(403, 'file is not part of this session')
+        return
+      }
+      try {
+        const content = readDiagramFile(path)
+        res.writeHead(200, { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'no-store' })
+        res.end(content)
+      } catch (error) {
+        writeError(404, error instanceof Error ? error.message : 'diagram not found')
+      }
+    },
+  }), 'drawio-chat: diagram route')
 
   const tools = (ctx as unknown as { tools: { register(definition: ToolDefinition): unknown } }).tools
 
@@ -413,7 +441,7 @@ export function apply(ctx: Context): void {
       const page = typeof args.page === 'number' && Number.isInteger(args.page) ? args.page : 0
       const result = applyOps(file, ops, page)
       const next = serializeDiagram(file)
-      remember(target.path, current)
+      snapshots.remember(target.path, current)
       atomicWrite(target.path, next)
       lastByCwd.set(target.cwd, target.path)
       knownFiles.add(target.path)
@@ -437,8 +465,7 @@ export function apply(ctx: Context): void {
     },
     execute: async (args: { path?: unknown }, exec: { agent?: unknown; signal?: unknown }) => {
       const target = await targetPath(ctx, exec, args.path)
-      const stack = snapshots.get(target.path)
-      const previous = stack?.pop()
+      const previous = snapshots.undo(target.path)
       if (previous === undefined) throw new DiagramError('there is no recorded version to undo for this file')
       atomicWrite(target.path, previous)
       lastByCwd.set(target.cwd, target.path)
@@ -462,6 +489,4 @@ export function apply(ctx: Context): void {
     },
   })
 
-  // Keep the allowlist exported for the preview route added in the next step.
-  void knownFiles
 }
