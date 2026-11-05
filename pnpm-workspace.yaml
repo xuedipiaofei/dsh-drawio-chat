@@ -1,0 +1,12 @@
+# Single-package repository: one plugin, one publishable manifest.
+packages:
+  - .
+
+# Runtime peers (@deepseek-ai/dsh, react) are supplied by the host profile.
+autoInstallPeers: false
+
+# Build against the same official SDK cohort as the desktop host (0.2.1-rc.5).
+overrides:
+  '@deepseek-ai/dsh-client-store': '0.2.1-rc.5'
+  '@deepseek-ai/dsh-client-ui-primitives': '0.2.1-rc.5'
+  '@deepseek-ai/dsh-client-ui-slots': '0.2.1-rc.5'
