@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.2.2 — 2026-11-06
+
+- Fix: `drawio_read` returned an internal `summary` field that its tool-output
+  schema did not declare (`additionalProperties: false`), so the host rejected
+  every read result with `"value.summary" is not a declared property`. The value
+  stays inside the documented contract (`path`, `revision`, `pages`, counts) and
+  the rendered structure text is built from those fields.
+- Regression test: every tool result is validated against its declared output
+  schema — undeclared properties, missing `required` fields and primitive type
+  mismatches fail the suite.
+- Docs: README feature overview (draw / edit / view / export / scope), current
+  tool names (`drawio_create`), refreshed known limits; the marketplace
+  description now mentions the read-edit-undo loop.
+- 13 test files / 50 tests.
+
 ## 0.2.1 — 2026-11-06
 
 - New `*.drawio` sidebar tab: clicking a diagram in the chat / file tree opens

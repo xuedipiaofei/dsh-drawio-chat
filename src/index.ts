@@ -73,6 +73,13 @@ const knownFiles = new Set<string>()
 /** One tool definition, structurally compatible with `ctx.tools.register`. */
 type ToolDefinition = Record<string, unknown>
 
+/** Value `drawio_read` returns: structure fields plus the revision token. */
+type ReadToolValue = Pick<DiagramSummary, 'pages' | 'nodeCount' | 'edgeCount' | 'truncated'> & {
+  path: string
+  revision: string
+  pageCount: number
+}
+
 /** Structural view of the host services we call (no SDK type dependency). */
 interface HostFaces {
   get?: (name: string) => unknown
@@ -449,7 +456,7 @@ export function apply(ctx: Context): void {
         },
         required: ['path', 'revision', 'pageCount', 'nodeCount', 'edgeCount'],
       },
-      render: (_args: unknown, value: { path: string; revision: string; summary: DiagramSummary }) => [{ type: 'text', text: renderSummary(value.path, value.revision, value.summary) }],
+      render: (_args: unknown, value: ReadToolValue) => [{ type: 'text', text: renderSummary(value.path, value.revision, value) }],
       presentationMeta: (_args: unknown, value: { path: string; revision: string; title?: string }) => ({ ...(value.title === undefined ? {} : { title: value.title }), path: value.path, revision: value.revision }),
     },
     execute: async (args: { path?: unknown; page?: unknown }, exec: { agent?: unknown; signal?: unknown }) => {
@@ -459,7 +466,7 @@ export function apply(ctx: Context): void {
       const summary = summarizeDiagram(file)
       lastByCwd.set(target.cwd, target.path)
       knownFiles.add(target.path)
-      return { path: target.path, revision: revisionOf(content), pageCount: file.pages.length, nodeCount: summary.nodeCount, edgeCount: summary.edgeCount, truncated: summary.truncated, pages: summary.pages, summary }
+      return { path: target.path, revision: revisionOf(content), pageCount: file.pages.length, nodeCount: summary.nodeCount, edgeCount: summary.edgeCount, truncated: summary.truncated, pages: summary.pages }
     },
   })
 

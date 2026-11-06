@@ -9,9 +9,18 @@ import { join } from 'node:path'
 import { describe, expect, it, vi } from 'vitest'
 import { apply, ROUTES, TOOL_NAMES } from '../src/index.ts'
 
+/** The subset of JSON Schema the host tools declare for their output. */
+interface ToolOutputSchema {
+  type?: string
+  properties?: Record<string, ToolOutputSchema>
+  required?: string[]
+  additionalProperties?: boolean
+}
+
 interface RegisteredTool {
   name: string
   execute: (args: Record<string, unknown>, exec: Record<string, unknown>) => Promise<unknown>
+  output?: { schema?: ToolOutputSchema }
 }
 
 /** Fake host context capturing routes, tools and the working directory face. */
@@ -206,6 +215,44 @@ describe('host apply', () => {
       apply(host.ctx)
       await expect(tool(host, TOOL_NAMES.read).execute({ path: '../escape.drawio' }, { agent: {} })).rejects.toThrow(/inside the session workspace/u)
       await expect(tool(host, TOOL_NAMES.read).execute({ path: '/etc/passwd' }, { agent: {} })).rejects.toThrow(/\.drawio/u)
+    } finally {
+      rmSync(tmp, { recursive: true, force: true })
+    }
+  })
+
+  it('keeps every tool result inside its declared output schema', async () => {
+    const tmp = mkdtempSync(join(tmpdir(), 'drawio-chat-'))
+    try {
+      const host = fakeHost(tmp)
+      apply(host.ctx)
+      const created = await tool(host, TOOL_NAMES.create).execute({ title: 'Login flow', xml: NODE_XML }, { agent: {} }) as Record<string, unknown>
+      const read = await tool(host, TOOL_NAMES.read).execute({ path: created.path as string }, { agent: {} }) as Record<string, unknown>
+      const applied = await tool(host, TOOL_NAMES.apply).execute({ path: created.path, ops: [{ op: 'addNode', id: 'n2', label: 'Home', x: 200, y: 40 }] }, { agent: {} }) as Record<string, unknown>
+      const undone = await tool(host, TOOL_NAMES.undo).execute({ path: created.path }, { agent: {} }) as Record<string, unknown>
+      const results: Array<[string, Record<string, unknown>]> = [
+        [TOOL_NAMES.create, created],
+        [TOOL_NAMES.read, read],
+        [TOOL_NAMES.apply, applied],
+        [TOOL_NAMES.undo, undone],
+      ]
+      for (const [name, value] of results) {
+        const schema = tool(host, name).output?.schema
+        expect(schema, `${name} declares an output schema`).toBeDefined()
+        const properties = schema?.properties ?? {}
+        // The GUI rejects a tool result that carries an undeclared property.
+        if (schema?.additionalProperties === false) {
+          for (const key of Object.keys(value)) expect(properties, `${name}.${key} is undeclared`).toHaveProperty(key)
+        }
+        for (const key of schema?.required ?? []) expect(value, `${name}.${key} is required`).toHaveProperty(key)
+        for (const [key, spec] of Object.entries(properties)) {
+          if (!(key in value)) continue
+          const actual = value[key]
+          if (spec.type === 'string') expect(typeof actual, `${name}.${key} is a string`).toBe('string')
+          else if (spec.type === 'integer') expect(Number.isInteger(actual), `${name}.${key} is an integer`).toBe(true)
+          else if (spec.type === 'boolean') expect(typeof actual, `${name}.${key} is a boolean`).toBe('boolean')
+          else if (spec.type === 'array') expect(Array.isArray(actual), `${name}.${key} is an array`).toBe(true)
+        }
+      }
     } finally {
       rmSync(tmp, { recursive: true, force: true })
     }

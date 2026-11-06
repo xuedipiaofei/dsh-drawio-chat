@@ -1,12 +1,23 @@
 # dsh-drawio-chat
 
-DeepSeek Harness 的**聊天优先** draw.io 插件：模型调用 `drawio_diagram` 写出一张 draw.io 图，聊天里直接出现可缩放/平移的 draw.io 视图，同时把 `.drawio` 文件保存到当前工作区的 `diagrams/` 目录。
+DeepSeek Harness 的**聊天优先** draw.io 插件：模型创建、读取和修改原生 `.drawio` 文件，聊天里用 draw.io viewer 直接渲染，图始终留在工作区。
 
 - **不登录 draw.io**、不需要 npx MCP server、不需要本地编辑器安装。
 - 渲染发生在 **sandbox iframe** 里（opaque origin，模型生成的 XML 不会接触 GUI 源）。
 - 参考文档工具 `drawio_reference` 从公开的 `https://mcp.draw.io/mcp` 取 draw.io 官方 XML 参考（无鉴权）；**图本身不上传**，取不到时回退内置精简参考。
-- 卡片提供「下载 .drawio」「导出 SVG」「在 draw.io 打开」（app.diagrams.net 链接）。
-- **v0.2 进行中**：`drawio_read`（按 id/坐标/样式读结构，返回 revision）、`drawio_apply`（结构化 ops 批量改图、原子写、revision 冲突保护）、`drawio_undo`（回退最近 8 版）已实现；客户端卡片与 PNG 导出待下一步；详见 [docs/design-v0.2.md](docs/design-v0.2.md)。
+- 工具只能读写会话工作区内的 `.drawio` 文件；写入是原子的。
+
+## 功能一览
+
+**画** —— 流程图、架构图、UML、ER、网络拓扑、线框等 draw.io 形状库；多页面、图层、容器与泳道；标签支持 LaTeX 排版。
+
+**改** —— `drawio_read` 返回按 id/坐标/样式的结构摘要和当前 revision；`drawio_apply` 批量执行语义操作（标签、样式、增删节点与连线、移动、层序），原子写 + revision 冲突保护；`drawio_undo` 可回退到该文件最近 8 个版本中的任意一个。
+
+**看** —— 聊天内嵌可交互的 draw.io viewer（缩放、平移、图层、翻页）；`.drawio` 文件在右侧栏直接预览，不再是 XML 文本。
+
+**带** —— 下载 `.drawio`、导出 SVG 或 2× PNG、在 draw.io 打开；文件保存在 `diagrams/`，可随仓库提交。
+
+**边界** —— 面向结构图、流程、架构和教学示意图。不做 3D 交互课件和视频，那需要另外的插件或渲染管线。
 
 ## 安装
 
@@ -18,14 +29,14 @@ node scripts/install-into-desktop-profile.mjs --dry-run
 node scripts/install-into-desktop-profile.mjs
 ```
 
-安装后重启 App，让模型「画一张登录流程图」，它会调用 `drawio_diagram`，聊天里出现 draw.io 视图，文件落在工作区 `diagrams/`。
+安装后重启 App，让模型「画一张登录流程图」（`drawio_create`），聊天里出现 draw.io 视图，文件落在工作区 `diagrams/`。后续「把 Home 节点改名」走 `drawio_read` + `drawio_apply`，「撤销刚才的修改」走 `drawio_undo`。
 
-## 已知限制（v0.1，v0.2 路线见设计文档）
+## 已知限制
 
-- 目前只接受 draw.io XML（`mxGraphModel`/`mxfile`），mermaid 输入在下一版处理。
-- 内联查看器脚本来自 `https://viewer.diagrams.net`（无账号要求，但首次渲染需要联网）；离线离线包在计划中。
-- 还没有 `*.drawio` 的侧栏 tab 与 PNG 导出（SVG 导出已有）。
+- 只接受 draw.io XML（`mxGraphModel`/`mxfile`），暂不支持 Mermaid 输入。
+- 内联 viewer 脚本来自 `https://viewer.diagrams.net`（无账号要求，首次渲染需要联网）；离线包在计划中。
+- 不输出 3D 或视频——见上方「边界」。
 
 ## 验证
 
-`pnpm typecheck`、`pnpm test`（13 文件 / 49 用例）、`pnpm build` 通过；内联渲染用 headless Chrome 截图验证（`.harness/assets/viewer-sandbox-proof.png`）；SVG 与 PNG 导出都在 headless Chrome 里做了端到端验证（PNG：2400×1600 画布、84,368 字节、无 canvas taint）。
+`pnpm typecheck`、`pnpm test`（13 文件 / 50 用例）、`pnpm build` 通过；内联渲染用 headless Chrome 截图验证（`.harness/assets/viewer-sandbox-proof.png`）；SVG 与 PNG 导出都在 headless Chrome 里做了端到端验证（PNG：2400×1600 画布、84,368 字节、无 canvas taint）。
