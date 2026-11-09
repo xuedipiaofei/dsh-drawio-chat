@@ -1,7 +1,7 @@
 {
   "name": "dsh-drawio-chat",
   "version": "0.4.0",
-  "description": "draw.io diagrams inline in DeepSeek Harness: the agent creates, reads and edits native .drawio files, and the chat renders them with the draw.io viewer — no draw.io account, no npx MCP server, no local editor install.",
+  "description": "Draw.io in chat: describe it, get an interactive diagram in the transcript; 12 Chinese scenario templates; keep editing or undo the same .drawio file; right-sidebar preview. No account, no MCP server, no editor.",
   "icon": "icon.svg",
   "type": "module",
   "main": "lib/index.js",

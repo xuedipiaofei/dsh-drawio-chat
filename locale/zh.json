@@ -1,6 +1,6 @@
 {
   "meta": {
     "title": "Draw.io 图表",
-    "description": "聊天内联的 draw.io 图表：本地渲染，无需账号与外部服务。"
+    "description": "聊天里画 draw.io：说一句需求，对话里直接出可交互图表；内置 12 个中文场景模板；可继续改图、撤销同一个 .drawio 文件；右侧栏预览不再是 XML。不登录 draw.io、不需要 MCP server、不用装编辑器。"
   }
 }
