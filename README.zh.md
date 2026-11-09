@@ -10,6 +10,8 @@ DeepSeek Harness 的**聊天优先** draw.io 插件：模型创建、读取和�
 
 **链接** —— [在线模板站](https://xuedipiaofei.github.io/dsh-drawio-chat/) · [npm](https://www.npmjs.com/package/dsh-drawio-chat) · [社区市场条目](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin)
 
+![聊天里直接画 draw.io 图](docs/images/template-gallery.png)
+
 ## 怎么用
 
 卡片是**结果**而不是入口：装好插件、重启 App 后，直接开一个对话描述你要的图即可。

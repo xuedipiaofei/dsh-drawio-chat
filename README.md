@@ -10,6 +10,8 @@ The **chat-first** draw.io plugin for DeepSeek Harness. The model creates, inspe
 
 **Links** — [Template gallery](https://xuedipiaofei.github.io/dsh-drawio-chat/) · [npm](https://www.npmjs.com/package/dsh-drawio-chat) · [Marketplace entry](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin)
 
+![draw.io diagrams in the chat](docs/images/template-gallery.png)
+
 ## How to use
 
 The card is the result, not the entrance: start a conversation and describe the diagram you want.
