@@ -1,5 +1,7 @@
 # dsh-drawio-chat
 
+[![npm](https://img.shields.io/npm/v/dsh-drawio-chat?color=2563EB)](https://www.npmjs.com/package/dsh-drawio-chat) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](./LICENSE) [![templates](https://img.shields.io/badge/templates-12%20scenarios-2563EB)](https://xuedipiaofei.github.io/dsh-drawio-chat/)
+
 The **chat-first** draw.io plugin for DeepSeek Harness. The model creates, inspects and edits native `.drawio` files, the chat renders them with the real draw.io viewer, and every diagram stays in the workspace.
 
 - **No draw.io account**, no npx MCP server, no local editor install.

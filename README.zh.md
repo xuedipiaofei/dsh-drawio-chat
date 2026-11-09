@@ -1,5 +1,7 @@
 # dsh-drawio-chat
 
+[![npm](https://img.shields.io/npm/v/dsh-drawio-chat?color=2563EB)](https://www.npmjs.com/package/dsh-drawio-chat) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](./LICENSE) [![templates](https://img.shields.io/badge/templates-12%20scenarios-2563EB)](https://xuedipiaofei.github.io/dsh-drawio-chat/)
+
 DeepSeek Harness 的**聊天优先** draw.io 插件：模型创建、读取和修改原生 `.drawio` 文件，聊天里用 draw.io viewer 直接渲染，图始终留在工作区。
 
 - **不登录 draw.io**、不需要 npx MCP server、不需要本地编辑器安装。
