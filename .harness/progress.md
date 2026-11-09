@@ -55,3 +55,49 @@
 3. `*.drawio` 侧栏 tab（打开/预览工作区文件）与 SVG/PNG 导出。
 4. 本地安装到 desktop profile 真机验证（App 独占 profile，需退出 App）。
 5. 发布材料：README 双语已完成初稿；market entry、PUBLISHING、第三方许可声明待补。
+
+## 0.2.3 修复：右侧栏 .drawio 显示原始 XML（2026-11-09）
+- 用户反馈：点击打开 / 浮窗 / 右侧栏打开 `.drawio` 都显示 XML 源码，不是 draw.io 视图。
+- 根因：DSH 原生 tab 类型排名 = 优先级档位 → 命中 pattern 长度 → 注册顺序。已装的 `dsh-better-sidebar`
+  以 `extension` 档用 `dsh-resource://file/**`（22 字符）认领所有工作区文件；本插件原 pattern
+  `**/*.drawio`（13 字符，同档位）长度更短而落败，文件落到 better-sidebar 的可编辑文本编辑器（原始 XML）。
+- 修复：`src/client/index.ts` 新增 `SIDEBAR_PATTERNS = ['dsh-resource://file/**/*.drawio', '*.drawio']`
+  （整地址 pattern 31 字符，同档位胜出；basename pattern 作回退）。better-sidebar 打开文件前会探测
+  `sidebarRightTabs.candidates()`，命中别的 kind 时改走原生 `openResource`，因此聊天文件链接和
+  better-sidebar 文件树都会进入 draw.io 原生 tab。
+- 回归测试：`tests/client-apply.spec.ts` 校验注册 pattern 且长度必须大于 `dsh-resource://file/**`。
+- 验证：typecheck 通过；13 文件 / 51 用例通过；build 通过（client 39.39 kB）。
+- 部署：已把新 `lib/client.js`(+map) 原子替换进 `~/.dsh/profiles/desktop` 的
+  `plugins/dsh-drawio-chat/lib` 与 `node_modules/dsh-drawio-chat/lib`（原文件备份为
+  `*.bak-before-0.2.3`），等待 client-hmr 热更新 / 下次启动 App 生效。
+- 同时生成可直接查看的 `diagrams/login-flow.png`（1458×1937）。
+- 下一步：确认页面热更新后重开 `.drawio` 是否进入 draw.io tab；若页面未热更新则重启 App 或
+  ⌘Q 后运行 `node scripts/install-into-desktop-profile.mjs` 重新安装 0.2.3；之后可考虑
+  增加 `ctx.betterSidebar.registerFileViewer` 集成，让 better-sidebar 自身 UI 也直接提供画布。
+
+## 0.3.0：内置场景模板 + drawio_template 工具 + 使用文档（2026-11-09）
+- 用户反馈（转述自另一会话）：市场卡片看不出怎么用；draw.io 没有公开模板市场，希望内置常见场景模板，长期可做模板站。
+- 模板库：`templates/` 12 个原创中文场景模板 + `templates/catalog.json`（version 1、license Apache-2.0、categories、templates[{id,file,category,title{zh,en},description{zh,en},tags}]）。分类：flowchart / architecture / data / sequence / org / swimlane。目录格式刻意做成将来站点可直接复用的 manifest。
+- 新增 `src/model/templates.ts`：catalog 校验（id 唯一、file 必须 templates/ 内 *.drawio、分类存在）、`loadCatalog`、`searchTemplates`（关键词 AND + 分类）、`renderCatalogText`、`listEntry`、`templateFile`。
+- 新增 host 工具 `drawio_template`：无 id → 列出/搜索（query/category）；有 id → 复制到 `diagrams/<id>.drawio`（重名自动 -2…，显式 path 不覆盖），返回 path/revision，卡片渲染；`TOOL_NAMES.template`。
+- 新增 client `DrawioTemplateCard`（created → 复用 DrawioFileCard mode=template；listed → 目录文本卡）+ `TEMPLATE_TOOL_NAME`、locale keys `drawio.fileTemplate` / `drawio.templateCatalog`、`FileCardMode='template'`、`.listText` 样式。
+- 文档：README/README.zh 增加 How to use / 怎么用（3 个示例提示词 + 卡片行为 + 续改/撤销 + 文件位置）与模板章节；market/index.json 描述补使用方式 + 模板库；版本 0.3.0 + CHANGELOG。
+- 开发工具：`scripts/check-template.py`（结构/连线端点/兄弟重叠校验）、`scripts/preview-drawio.sh`（headless Chrome 渲染单文件预览）。
+- 测试：`tests/templates.spec.ts`（catalog、文件健康、重叠、搜索）、`tests/template-card.spec.tsx`、host-apply 增加模板工具用例、client-apply 注册断言；三件套进行中。
+- 并行：teammates `flow-templates`(task-1, 5 个流程模板) 与 `arch-templates`(task-2, 6 个架构/数据/组织模板) 绘制中；login 模板由 Lead 完成。
+- 待办：收齐 11 个模板 → 全量测试 + 12 张渲染拼图人工检查 → build → 让用户 ⌘Q 后跑 install 脚本升级到 0.3.0（新 host 工具需重启）；下一步做模板站静态站脚手架（GitHub Pages + catalog 搜索/预览/一键在 draw.io 打开/复制提示词）。
+- 2026-11-09 16:21 收尾：12 个模板全部就位（flow-templates 完成 5 个 / arch-templates 完成 6 个 / login 由 Lead 提供），`python3 scripts/check-template.py` 12/12 OK；全量测试 15 文件 / 63 用例通过；typecheck 通过；build 通过（host 68.00 kB / client 42.14 kB）；`pnpm pack --dry-run` 含 templates/。
+- 人工目检：12 张模板各渲染 1400×1100 预览并拼图检查，无裁切/节点重叠/文字溢出；已知可接受项：flow-troubleshoot 2 处正交线交叉（无节点重叠），swimlane 的"结束"椭圆用相对 y=60 对齐同排矩形。
+- 待用户操作：⌘Q 重启 App 使 0.3.0 生效（新的 host 工具 drawio_template 需要重启加载）；或退出后运行 `node scripts/install-into-desktop-profile.mjs` 做完整安装。
+
+## 0.4.0：模板站 + 远程模板目录 + better-sidebar 文件查看器（2026-11-09）
+- 模板站：teammate `template-site`（task-3）在 `site/` 做零依赖静态站（搜索/分类/懒加载 draw.io 预览/在 draw.io 打开/下载/复制提示词、`?q=` 可分享），`scripts/build-site.mjs` 组装 `site-dist/`，`.github/workflows/pages.yml` 部署 GitHub Pages。
+- 远程目录：`drawio_template` 新增 `catalog`（HTTPS catalog.json URL）；`src/model/templates.ts` 增加 `assertRemoteUrl`（HTTPS-only、拒绝凭据/loopback/内网）、`fetchRemoteCatalog`（8s 超时、512KiB 上限、60s 缓存、file 相对 catalog 解析且必须是 .drawio）、`mergeCatalogs`（内置优先、id 去重）、`fetchTemplateXml`（远程拉取、2MiB 上限）。列表拉取失败降级为内置 + 提示；按 id 实例化远程失败直接报错。
+- better-sidebar：选择 `registerFileViewer`（比单独做底部面板 tab 更易用：一个组件同时覆盖停靠/浮窗/底部工作台，`*.drawio` 默认画布，查看器下拉可切回代码编辑器，文件读取/刷新由 better-sidebar 统一管）。新增 `src/client/BetterSidebarViewer.tsx`（`exts:['drawio']`, priority 50, `fsRead`），客户端用可选 `ctx.inject(['betterSidebar'])` 注册，没装则完全无副作用、无硬依赖。
+- 测试：16 文件 / 73 用例通过（新增 remote catalog 模型+host 工具用例、better-sidebar 注册与查看器渲染用例）；typecheck/build 通过；version 0.4.0；CHANGELOG/README 已更新。
+- 站点数据互通：build-site 需把 catalog 的 file 重写为 `templates/<name>`，使站点 catalog 可直接作为 `drawio_template({catalog})` 的远程目录（已让 teammate 改）。
+- 待办：站点最终截图/预览并发优化确认 → 0.4.0 构建后预装进 profile → 用户 ⌘Q 重启验证（新 host 工具 + 新 client 查看器需重启）。
+- 2026-11-09 17:12 收尾：模板站交付（site/ + build-site + pages.yml，catalog file 重写为 templates/ 以兼容远程目录；预览 hydration 并发上限 2）；`drawio_template` 远程目录（HTTPS-only/大小超时限制/内置优先合并）；better-sidebar `registerFileViewer` 集成（画布默认、停靠/浮窗/底部工作台通用）；修复 `editorUrl()` 在 Chrome 156 CompressionStream 背压死锁（「在 draw.io 打开」会挂起），加回归测试；全量 16 文件 / 74 用例、typecheck、build 通过；版本 0.4.0。
+- 站点验证：build 16 文件、本地 200/304、桌面/手机/搜索截图通过（/tmp/site-home.png 等），12 模板预览出图；站点 catalog 经插件 `validateCatalog(remote)` 校验 12/12。
+- 已预装 0.4.0 到 desktop profile（lib/templates/package.json，备份 `*.bak-before-0.3.0` 之前版本 + 本次 0.4.0 覆盖）；用户 ⌘Q 重启后生效（新 host 工具 `catalog` 参数 + better-sidebar 查看器）。
+- 下一步（用户侧）：仓库 Settings→Pages 选 GitHub Actions 发布模板站；`npm publish` 0.4.0 并打 tag；可选：站点暗色主题/缩略图缓存、模板扩到 20+、贡献指南。

@@ -1,0 +1,100 @@
+<mxGraphModel dx="900" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="title" value="请假 / 报销审批流程" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1F2937;" vertex="1" parent="1">
+      <mxGeometry x="40" y="10" width="300" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="start" value="开始" style="ellipse;whiteSpace=wrap;html=1;fontSize=16;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="480" y="30" width="120" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="p1" value="员工提交申请&lt;br&gt;&lt;small&gt;请假单 / 报销单&lt;/small&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fontSize=16;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="470" y="130" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="d1" value="主管审批&lt;br&gt;是否通过?" style="rhombus;whiteSpace=wrap;html=1;fontSize=15;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="460" y="240" width="160" height="90" as="geometry" />
+    </mxCell>
+    <mxCell id="reject" value="驳回并通知&lt;br&gt;员工修改" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fontSize=16;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="200" y="250" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="p2" value="HR / 财务复核&lt;br&gt;&lt;small&gt;核对材料与额度&lt;/small&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fontSize=16;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="470" y="380" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="d2" value="复核是否&lt;br&gt;通过?" style="rhombus;whiteSpace=wrap;html=1;fontSize=15;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="460" y="490" width="160" height="90" as="geometry" />
+    </mxCell>
+    <mxCell id="p3" value="财务打款并归档" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fontSize=16;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="470" y="630" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="end" value="结束" style="ellipse;whiteSpace=wrap;html=1;fontSize=16;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="480" y="740" width="120" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="withdraw" value="员工撤回申请" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fontSize=16;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="870" y="130" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="end2" value="结束" style="ellipse;whiteSpace=wrap;html=1;fontSize=16;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="880" y="230" width="120" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="overtime" value="超时自动升级&lt;br&gt;&lt;small&gt;转交上级审批&lt;/small&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fontSize=16;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="870" y="380" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="end3" value="结束" style="ellipse;whiteSpace=wrap;html=1;fontSize=16;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="880" y="490" width="120" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;" edge="1" parent="1" source="start" target="p1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;" edge="1" parent="1" source="p1" target="d1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e3" value="是" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;fontColor=#2D7600;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="d1" target="p2">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e4" value="否" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#B20000;endArrow=block;endFill=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5833;fontColor=#B20000;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="d1" target="reject">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e5" value="否" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#B20000;endArrow=block;endFill=1;exitX=0;exitY=0.5;entryX=0.5;entryY=1;fontColor=#B20000;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="d2" target="reject">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="400" y="535" />
+          <mxPoint x="400" y="350" />
+          <mxPoint x="270" y="350" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e6" value="修改后重新提交" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#B20000;endArrow=block;endFill=1;exitX=0;exitY=0.5833;entryX=0;entryY=0.5;fontSize=14;fontColor=#B20000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="reject" target="p1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="150" y="285" />
+          <mxPoint x="150" y="160" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;" edge="1" parent="1" source="p2" target="d2">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e8" value="是" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;fontColor=#2D7600;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="d2" target="p3">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;" edge="1" parent="1" source="p3" target="end">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e10" value="撤回" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#B20000;endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontColor=#B20000;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="p1" target="withdraw">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e11" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;" edge="1" parent="1" source="withdraw" target="end2">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e12" value="超时未处理" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontColor=#B20000;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="d1" target="overtime">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="760" y="285" />
+          <mxPoint x="760" y="410" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e13" value="上级代审" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;fontSize=14;fontColor=#475569;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="overtime" target="end3">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

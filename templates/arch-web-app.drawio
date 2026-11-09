@@ -1,0 +1,114 @@
+<mxGraphModel dx="1000" dy="760" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="980" pageHeight="680" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="title" value="Web 应用部署架构" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1F2937;" vertex="1" parent="1">
+      <mxGeometry x="40" y="10" width="300" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="browser" value="用户浏览器" style="rounded=1;whiteSpace=wrap;html=1;fontSize=16;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="450" y="70" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="cdn" value="CDN 边缘节点" style="rounded=1;whiteSpace=wrap;html=1;fontSize=15;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="450" y="170" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="lb" value="负载均衡 Nginx" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fontSize=15;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="450" y="270" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="appCluster" value="应用集群" style="swimlane;whiteSpace=wrap;html=1;collapsible=0;startSize=30;fillColor=#f5f5f5;swimlaneFillColor=#f7fafe;strokeColor=#b3c6d9;fontSize=16;fontStyle=1;fontColor=#374151;align=left;spacingLeft=10;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="350" y="370" width="340" height="140" as="geometry" />
+    </mxCell>
+    <mxCell id="appA" value="应用服务器 A" style="rounded=1;whiteSpace=wrap;html=1;fontSize=16;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;" vertex="1" parent="appCluster">
+      <mxGeometry x="30" y="45" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="appB" value="应用服务器 B" style="rounded=1;whiteSpace=wrap;html=1;fontSize=16;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;" vertex="1" parent="appCluster">
+      <mxGeometry x="180" y="45" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="logC" value="日志收集" style="rounded=1;whiteSpace=wrap;html=1;fontSize=16;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="90" y="570" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="dbMaster" value="主库 MySQL" style="shape=cylinder3;whiteSpace=wrap;html=1;fontSize=15;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=1.5;boundedLbl=1;backgroundOutline=1;size=15;" vertex="1" parent="1">
+      <mxGeometry x="300" y="570" width="100" height="70" as="geometry" />
+    </mxCell>
+    <mxCell id="dbSlave" value="从库 MySQL" style="shape=cylinder3;whiteSpace=wrap;html=1;fontSize=15;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=1.5;boundedLbl=1;backgroundOutline=1;size=15;" vertex="1" parent="1">
+      <mxGeometry x="480" y="570" width="100" height="70" as="geometry" />
+    </mxCell>
+    <mxCell id="redis" value="Redis 缓存" style="rounded=1;whiteSpace=wrap;html=1;fontSize=16;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="610" y="570" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="oss" value="对象存储 OSS" style="shape=cylinder3;whiteSpace=wrap;html=1;fontSize=15;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=1.5;boundedLbl=1;backgroundOutline=1;size=15;" vertex="1" parent="1">
+      <mxGeometry x="780" y="370" width="140" height="70" as="geometry" />
+    </mxCell>
+    <mxCell id="monitor" value="监控告警" style="rounded=1;whiteSpace=wrap;html=1;fontSize=16;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="790" y="570" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="browser" target="cdn">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="cdn" target="lb">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="lb" target="appCluster">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e4" value="读写" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;fontSize=14;fontColor=#6B7280;" edge="1" parent="1" source="appA" target="dbMaster">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="450" y="525" />
+          <mxPoint x="350" y="525" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e5" value="只读" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;fontSize=14;fontColor=#6B7280;" edge="1" parent="1" source="appB" target="dbSlave">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="600" y="525" />
+          <mxPoint x="530" y="525" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e6" value="缓存" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;fontSize=14;fontColor=#6B7280;" edge="1" parent="1" source="appB" target="redis">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="600" y="525" />
+          <mxPoint x="680" y="525" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e7" value="静态资源" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;dashed=1;exitX=1;exitY=0.5;entryX=0.5;entryY=0;fontSize=14;fontColor=#6B7280;" edge="1" parent="1" source="cdn" target="oss">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="740" y="200" />
+          <mxPoint x="740" y="340" />
+          <mxPoint x="850" y="340" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="appB" target="oss">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="720" y="445" />
+          <mxPoint x="720" y="405" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e9" value="日志上报" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;fontSize=14;fontColor=#6B7280;" edge="1" parent="1" source="appB" target="logC">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="600" y="545" />
+          <mxPoint x="160" y="545" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e10" value="指标上报" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;dashed=1;exitX=1;exitY=0.75;entryX=0;entryY=0.5;fontSize=14;fontColor=#6B7280;" edge="1" parent="1" source="appCluster" target="monitor">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="770" y="475" />
+          <mxPoint x="770" y="600" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e11" value="主从复制" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontSize=14;fontColor=#6B7280;" edge="1" parent="1" source="dbMaster" target="dbSlave">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

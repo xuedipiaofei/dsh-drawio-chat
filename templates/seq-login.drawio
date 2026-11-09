@@ -1,0 +1,54 @@
+<mxGraphModel dx="1000" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="980" pageHeight="660" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="title" value="登录时序图" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1F2937;" vertex="1" parent="1">
+      <mxGeometry x="40" y="10" width="300" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="user" value="用户" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;fontSize=16;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="80" y="70" width="120" height="420" as="geometry" />
+    </mxCell>
+    <mxCell id="front" value="前端页面" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;fontSize=16;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="260" y="70" width="120" height="420" as="geometry" />
+    </mxCell>
+    <mxCell id="api" value="API 服务" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;fontSize=16;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="440" y="70" width="120" height="420" as="geometry" />
+    </mxCell>
+    <mxCell id="auth" value="认证服务" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;fontSize=16;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="620" y="70" width="120" height="420" as="geometry" />
+    </mxCell>
+    <mxCell id="db" value="数据库" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;fontSize=16;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="800" y="70" width="120" height="420" as="geometry" />
+    </mxCell>
+    <mxCell id="m1" value="输入账号密码" style="html=1;endArrow=block;endSize=6;strokeWidth=1.5;strokeColor=#475569;fontSize=14;fontColor=#374151;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=0.5;exitDx=0;exitDy=-120;entryX=0.5;entryY=0.5;entryDx=0;entryDy=-120;" edge="1" parent="1" source="user" target="front">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="m2" value="POST /login" style="html=1;endArrow=block;endSize=6;strokeWidth=1.5;strokeColor=#475569;fontSize=14;fontColor=#374151;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=0.5;exitDx=0;exitDy=-80;entryX=0.5;entryY=0.5;entryDx=0;entryDy=-80;" edge="1" parent="1" source="front" target="api">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="m3" value="校验凭据" style="html=1;endArrow=block;endSize=6;strokeWidth=1.5;strokeColor=#475569;fontSize=14;fontColor=#374151;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=0.5;exitDx=0;exitDy=-40;entryX=0.5;entryY=0.5;entryDx=0;entryDy=-40;" edge="1" parent="1" source="api" target="auth">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="m4" value="查询用户" style="html=1;endArrow=block;endSize=6;strokeWidth=1.5;strokeColor=#475569;fontSize=14;fontColor=#374151;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="auth" target="db">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="m5" value="返回用户" style="html=1;endArrow=block;endSize=6;strokeWidth=1.5;strokeColor=#475569;dashed=1;fontSize=14;fontColor=#374151;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=0.5;exitDx=0;exitDy=40;entryX=0.5;entryY=0.5;entryDx=0;entryDy=40;" edge="1" parent="1" source="db" target="auth">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="m6" value="签发 Token" style="html=1;endArrow=block;endSize=6;strokeWidth=1.5;strokeColor=#475569;dashed=1;fontSize=14;fontColor=#374151;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=0.5;exitDx=0;exitDy=80;entryX=0.5;entryY=0.5;entryDx=0;entryDy=80;" edge="1" parent="1" source="auth" target="api">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="m7" value="返回 Token" style="html=1;endArrow=block;endSize=6;strokeWidth=1.5;strokeColor=#475569;dashed=1;fontSize=14;fontColor=#374151;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=0.5;exitDx=0;exitDy=120;entryX=0.5;entryY=0.5;entryDx=0;entryDy=120;" edge="1" parent="1" source="api" target="front">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="m8" value="跳转首页" style="html=1;endArrow=block;endSize=6;strokeWidth=1.5;strokeColor=#475569;dashed=1;fontSize=14;fontColor=#374151;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=0.5;exitDx=0;exitDy=160;entryX=0.5;entryY=0.5;entryDx=0;entryDy=160;" edge="1" parent="1" source="front" target="user">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="note" value="实线箭头 = 请求消息&lt;br&gt;虚线箭头 = 响应消息" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#f5f5f5;strokeColor=#9CA3AF;fontSize=13;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;fontColor=#374151;" vertex="1" parent="1">
+      <mxGeometry x="80" y="540" width="240" height="70" as="geometry" />
+    </mxCell>
+    <mxCell id="hint" value="登录成功后前端保存 Token，跳转首页" style="text;html=1;fontSize=13;align=right;verticalAlign=middle;fontColor=#6B7280;" vertex="1" parent="1">
+      <mxGeometry x="600" y="548" width="340" height="26" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

@@ -1,0 +1,146 @@
+{
+  "version": 1,
+  "license": "Apache-2.0",
+  "categories": [
+    { "id": "flowchart", "title": { "zh": "流程与判断", "en": "Flow & decisions" } },
+    { "id": "architecture", "title": { "zh": "架构与部署", "en": "Architecture & deployment" } },
+    { "id": "data", "title": { "zh": "数据与模型", "en": "Data & models" } },
+    { "id": "sequence", "title": { "zh": "时序与交互", "en": "Sequence & interaction" } },
+    { "id": "org", "title": { "zh": "组织与团队", "en": "Organization & team" } },
+    { "id": "swimlane", "title": { "zh": "泳道与协作", "en": "Swimlanes" } }
+  ],
+  "templates": [
+    {
+      "id": "flow/login",
+      "file": "flow-login.drawio",
+      "category": "flowchart",
+      "title": { "zh": "系统登录流程", "en": "System login flow" },
+      "description": {
+        "zh": "标准登录流程：输入校验 → 服务端认证 → 生成 Token → 跳转首页，含失败重试与连续 5 次锁定分支。",
+        "en": "Standard login flow: input validation, credential check, token issuance and home redirect, with retry and five-failure lockout branches."
+      },
+      "tags": ["登录", "认证", "login", "auth", "流程"]
+    },
+    {
+      "id": "flow/approval",
+      "file": "flow-approval.drawio",
+      "category": "flowchart",
+      "title": { "zh": "请假/报销审批流程", "en": "Approval workflow" },
+      "description": {
+        "zh": "员工提交 → 直属主管审批 → HR/财务复核 → 归档；含驳回、撤回与超时升级分支。",
+        "en": "Employee request, line-manager approval, HR or finance review, archive; includes rejection, withdrawal and timeout escalation."
+      },
+      "tags": ["审批", "请假", "报销", "workflow", "流程"]
+    },
+    {
+      "id": "flow/order",
+      "file": "flow-order.drawio",
+      "category": "flowchart",
+      "title": { "zh": "电商下单流程", "en": "Checkout flow" },
+      "description": {
+        "zh": "选购 → 下单 → 支付 → 库存锁定 → 发货 → 收货；含支付失败、库存不足与取消分支。",
+        "en": "Select, order, pay, reserve stock, ship, receive; with payment failure, out-of-stock and cancellation branches."
+      },
+      "tags": ["下单", "支付", "订单", "ecommerce", "流程"]
+    },
+    {
+      "id": "flow/ci-cd",
+      "file": "flow-ci-cd.drawio",
+      "category": "flowchart",
+      "title": { "zh": "CI/CD 流水线", "en": "CI/CD pipeline" },
+      "description": {
+        "zh": "提交 → 构建 → 测试 → 安全扫描 → 预发部署 → 审批 → 生产发布 → 监控；含失败回滚分支。",
+        "en": "Commit, build, test, security scan, staging deploy, approval, production release, monitoring; with a failure rollback branch."
+      },
+      "tags": ["ci", "cd", "devops", "流水线", "发布"]
+    },
+    {
+      "id": "flow/troubleshoot",
+      "file": "flow-troubleshoot.drawio",
+      "category": "flowchart",
+      "title": { "zh": "线上故障排查决策树", "en": "Incident troubleshooting tree" },
+      "description": {
+        "zh": "从告警出发，按可用性、依赖、资源逐层判断，定位服务、数据库、缓存或网络问题并给出处置动作。",
+        "en": "Start from an alert, branch by availability, dependencies and resources, and land on service, database, cache or network fixes."
+      },
+      "tags": ["故障", "排查", "决策树", "incident", "oncall"]
+    },
+    {
+      "id": "arch/microservices",
+      "file": "arch-microservices.drawio",
+      "category": "architecture",
+      "title": { "zh": "微服务架构图", "en": "Microservices architecture" },
+      "description": {
+        "zh": "客户端 → API 网关 → 用户/订单/支付服务 → 各自数据库 + Redis + 消息队列，含配置中心与可观测性。",
+        "en": "Clients, API gateway, user/order/payment services, databases, Redis and message queue, plus config center and observability."
+      },
+      "tags": ["微服务", "网关", "架构", "microservice", "redis"]
+    },
+    {
+      "id": "arch/web-app",
+      "file": "arch-web-app.drawio",
+      "category": "architecture",
+      "title": { "zh": "Web 应用部署架构", "en": "Web app deployment" },
+      "description": {
+        "zh": "浏览器 → CDN → 负载均衡/Nginx → 应用集群 → 数据库与缓存，含对象存储、日志与监控。",
+        "en": "Browser, CDN, load balancer, app cluster, database and cache, plus object storage, logging and monitoring."
+      },
+      "tags": ["部署", "nginx", "负载均衡", "web", "架构"]
+    },
+    {
+      "id": "data/etl",
+      "file": "data-etl.drawio",
+      "category": "data",
+      "title": { "zh": "数据 ETL 流程", "en": "ETL pipeline" },
+      "description": {
+        "zh": "业务库/日志/第三方数据 → 采集 → 清洗转换 → 数仓分层（ODS/DWD/DWS）→ BI 报表与数据服务。",
+        "en": "Sources (OLTP, logs, third party), ingest, clean and transform, warehouse layers, BI reports and data services."
+      },
+      "tags": ["etl", "数据", "数仓", "pipeline", "bi"]
+    },
+    {
+      "id": "data/er",
+      "file": "db-er.drawio",
+      "category": "data",
+      "title": { "zh": "电商 ER 模型", "en": "E-commerce ER model" },
+      "description": {
+        "zh": "用户、商品、订单、订单明细四张核心表，标注主键、外键与基数关系，可直接改字段。",
+        "en": "Four core tables — user, product, order, order item — with primary keys, foreign keys and cardinalities."
+      },
+      "tags": ["er", "数据库", "建模", "sql", "表结构"]
+    },
+    {
+      "id": "seq/login",
+      "file": "seq-login.drawio",
+      "category": "sequence",
+      "title": { "zh": "登录时序图", "en": "Login sequence diagram" },
+      "description": {
+        "zh": "用户、前端、API、认证服务、数据库五条生命线，展示登录请求、凭据校验与 Token 返回的时序。",
+        "en": "Five lifelines — user, frontend, API, auth service, database — showing the login request, credential check and token response."
+      },
+      "tags": ["时序", "sequence", "uml", "登录", "交互"]
+    },
+    {
+      "id": "org/team",
+      "file": "org-team.drawio",
+      "category": "org",
+      "title": { "zh": "团队组织架构图", "en": "Team org chart" },
+      "description": {
+        "zh": "CEO 之下产品、研发、测试、运营四个部门及下属小组的汇报关系，适合改造成自己团队的结构。",
+        "en": "CEO with product, engineering, QA and operations departments and their sub-teams; easy to reshape for your own team."
+      },
+      "tags": ["组织", "架构图", "团队", "org"]
+    },
+    {
+      "id": "swimlane/ticket",
+      "file": "swimlane-ticket.drawio",
+      "category": "swimlane",
+      "title": { "zh": "客服工单处理（泳道图）", "en": "Support ticket swimlane" },
+      "description": {
+        "zh": "用户、客服、技术支持、系统四条泳道：提单 → 受理 → 排障 → 回复 → 关单，含升级分支。",
+        "en": "Four lanes — user, support, engineering, system — from ticket creation through triage, troubleshooting, reply and closure, with escalation."
+      },
+      "tags": ["泳道", "swimlane", "客服", "工单", "流程"]
+    }
+  ]
+}

@@ -13,7 +13,7 @@ import { tt } from './panel-helpers.ts'
 import css from './drawio.module.css'
 
 /** Which tool produced this card. */
-export type FileCardMode = 'read' | 'apply' | 'undo'
+export type FileCardMode = 'read' | 'apply' | 'undo' | 'template'
 
 /** Result metadata written by the host tools. */
 export interface FileCardMeta {
@@ -38,9 +38,10 @@ export interface DrawioFileCardProps {
 const PREVIEW_ROUTE = '/api/dsh-drawio-chat/diagram'
 
 /** Title copy per mode. */
-function titleKey(mode: FileCardMode): 'drawio.fileRead' | 'drawio.fileApply' | 'drawio.fileUndo' {
+function titleKey(mode: FileCardMode): 'drawio.fileRead' | 'drawio.fileApply' | 'drawio.fileUndo' | 'drawio.fileTemplate' {
   if (mode === 'read') return 'drawio.fileRead'
   if (mode === 'apply') return 'drawio.fileApply'
+  if (mode === 'template') return 'drawio.fileTemplate'
   return 'drawio.fileUndo'
 }
 

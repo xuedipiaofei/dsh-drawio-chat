@@ -1,0 +1,102 @@
+<mxGraphModel dx="900" dy="760" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="800" pageHeight="620" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="title" value="电商 ER 模型" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1F2937;" vertex="1" parent="1">
+      <mxGeometry x="40" y="10" width="300" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="tUser" value="用户表 user" style="swimlane;html=1;collapsible=0;startSize=26;fontSize=15;fontStyle=1;fillColor=#dae8fc;swimlaneFillColor=#ffffff;strokeColor=#6c8ebf;strokeWidth=1.5;align=left;spacingLeft=8;" vertex="1" parent="1">
+      <mxGeometry x="60" y="110" width="200" height="156" as="geometry" />
+    </mxCell>
+    <mxCell id="u1" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tUser">
+      <mxGeometry x="0" y="26" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="u2" value="name : varchar(64)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tUser">
+      <mxGeometry x="0" y="52" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="u3" value="phone : varchar(20)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tUser">
+      <mxGeometry x="0" y="78" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="u4" value="email : varchar(128)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tUser">
+      <mxGeometry x="0" y="104" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="u5" value="created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tUser">
+      <mxGeometry x="0" y="130" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="tProduct" value="商品表 product" style="swimlane;html=1;collapsible=0;startSize=26;fontSize=15;fontStyle=1;fillColor=#d5e8d4;swimlaneFillColor=#ffffff;strokeColor=#82b366;strokeWidth=1.5;align=left;spacingLeft=8;" vertex="1" parent="1">
+      <mxGeometry x="500" y="110" width="200" height="182" as="geometry" />
+    </mxCell>
+    <mxCell id="p1" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tProduct">
+      <mxGeometry x="0" y="26" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="p2" value="name : varchar(128)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tProduct">
+      <mxGeometry x="0" y="52" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="p3" value="price : decimal(10,2)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tProduct">
+      <mxGeometry x="0" y="78" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="p4" value="stock : int" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tProduct">
+      <mxGeometry x="0" y="104" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="p5" value="status : tinyint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tProduct">
+      <mxGeometry x="0" y="130" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="p6" value="created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tProduct">
+      <mxGeometry x="0" y="156" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="tOrder" value="订单表 orders" style="swimlane;html=1;collapsible=0;startSize=26;fontSize=15;fontStyle=1;fillColor=#fff2cc;swimlaneFillColor=#ffffff;strokeColor=#d6b656;strokeWidth=1.5;align=left;spacingLeft=8;" vertex="1" parent="1">
+      <mxGeometry x="60" y="340" width="200" height="182" as="geometry" />
+    </mxCell>
+    <mxCell id="o1" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tOrder">
+      <mxGeometry x="0" y="26" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="o2" value="FK  user_id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tOrder">
+      <mxGeometry x="0" y="52" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="o3" value="order_no : varchar(32)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tOrder">
+      <mxGeometry x="0" y="78" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="o4" value="total_amount : decimal(10,2)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tOrder">
+      <mxGeometry x="0" y="104" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="o5" value="status : tinyint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tOrder">
+      <mxGeometry x="0" y="130" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="o6" value="created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tOrder">
+      <mxGeometry x="0" y="156" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="tItem" value="订单明细表 order_item" style="swimlane;html=1;collapsible=0;startSize=26;fontSize=15;fontStyle=1;fillColor=#e1d5e7;swimlaneFillColor=#ffffff;strokeColor=#9673a6;strokeWidth=1.5;align=left;spacingLeft=8;" vertex="1" parent="1">
+      <mxGeometry x="500" y="340" width="200" height="182" as="geometry" />
+    </mxCell>
+    <mxCell id="i1" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tItem">
+      <mxGeometry x="0" y="26" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="i2" value="FK  order_id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tItem">
+      <mxGeometry x="0" y="52" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="i3" value="FK  product_id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tItem">
+      <mxGeometry x="0" y="78" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="i4" value="quantity : int" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tItem">
+      <mxGeometry x="0" y="104" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="i5" value="unit_price : decimal(10,2)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tItem">
+      <mxGeometry x="0" y="130" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="i6" value="subtotal : decimal(10,2)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;html=1;fontSize=13;" vertex="1" parent="tItem">
+      <mxGeometry x="0" y="156" width="200" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="legend" value="PK = 主键 · FK = 外键 · 一对多关系" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;html=1;fontSize=13;fontColor=#6B7280;" vertex="1" parent="1">
+      <mxGeometry x="60" y="560" width="360" height="26" as="geometry" />
+    </mxCell>
+    <mxCell id="r1" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERmandOne;endFill=0;startFill=0;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="tUser" target="tOrder">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="r2" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERmandOne;endFill=0;startFill=0;strokeWidth=1.5;strokeColor=#475569;exitX=1;exitY=0.75;entryX=0;entryY=0.75;" edge="1" parent="1" source="tOrder" target="tItem">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="r3" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERmandOne;endFill=0;startFill=0;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="tProduct" target="tItem">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

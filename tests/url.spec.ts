@@ -1,6 +1,6 @@
 /** Diagram source extraction and the viewer/editor document builders. */
 import { inflateRawSync } from 'node:zlib'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { buildViewerHtml, editorUrl, readDiagramSource, sanitizeSvg } from '../src/client/contract.ts'
 
 const XML = '<mxGraphModel><root><mxCell id="0"/></root></mxGraphModel>'
@@ -54,6 +54,44 @@ describe('sanitizeSvg', () => {
 })
 
 describe('editorUrl', () => {
+  it('drains CompressionStream while writing instead of deadlocking on backpressure', async () => {
+    // Chrome 156: `write()` never settles until the readable side is consumed.
+    // A write awaited before the read deadlocks and "Open in draw.io" hangs.
+    const Real = globalThis.CompressionStream
+    class BackpressureStream {
+      writable: { getWriter: () => { write: (chunk: Uint8Array) => Promise<void>; close: () => Promise<void>; abort: () => Promise<void> } }
+      readable: ReadableStream<Uint8Array>
+      constructor() {
+        let releaseWrite: (() => void) | undefined
+        const gate = new Promise<void>((resolve) => { releaseWrite = resolve })
+        this.writable = {
+          getWriter: () => ({
+            write: async (_chunk: Uint8Array) => { await gate },
+            close: async () => {},
+            abort: async () => {},
+          }),
+        }
+        this.readable = new ReadableStream<Uint8Array>({
+          start(controller) {
+            controller.enqueue(new Uint8Array([1, 2, 3]))
+            controller.close()
+            releaseWrite?.()
+          },
+        })
+      }
+    }
+    vi.stubGlobal('CompressionStream', BackpressureStream as unknown as typeof CompressionStream)
+    try {
+      const raced = Promise.race([
+        editorUrl(XML),
+        new Promise((_resolve, reject) => { setTimeout(() => reject(new Error('editorUrl deadlocked')), 2_000) }),
+      ]) as Promise<string>
+      await expect(raced).resolves.toContain('#R')
+    } finally {
+      vi.stubGlobal('CompressionStream', Real)
+    }
+  })
+
   it('produces a draw.io editor link whose payload decodes back to the XML', async () => {
     const url = await editorUrl(XML)
     expect(url.startsWith('https://app.diagrams.net/?pv=0&grid=0#R')).toBe(true)

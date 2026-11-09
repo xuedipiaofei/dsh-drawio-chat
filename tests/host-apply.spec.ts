@@ -61,6 +61,7 @@ describe('host apply', () => {
         TOOL_NAMES.read,
         TOOL_NAMES.apply,
         TOOL_NAMES.undo,
+        TOOL_NAMES.template,
         TOOL_NAMES.reference,
       ])
       const state = { status: 0, body: '' }
@@ -220,6 +221,105 @@ describe('host apply', () => {
     }
   })
 
+  it('lists the template catalog and searches it', async () => {
+    const tmp = mkdtempSync(join(tmpdir(), 'drawio-chat-'))
+    try {
+      const host = fakeHost(tmp)
+      apply(host.ctx)
+      const listed = await tool(host, TOOL_NAMES.template).execute({}, { agent: {} }) as { action: string; total: number; templates: Array<{ id: string; category: string }>; text: string }
+      expect(listed.action).toBe('listed')
+      expect(listed.total).toBeGreaterThanOrEqual(8)
+      expect(listed.templates.map(entry => entry.id)).toContain('flow/login')
+      expect(listed.text).toContain('drawio_template')
+      const searched = await tool(host, TOOL_NAMES.template).execute({ query: '登录' }, {}) as { templates: Array<{ id: string }>; total: number }
+      expect(searched.templates.map(entry => entry.id)).toEqual(expect.arrayContaining(['flow/login', 'seq/login']))
+      const byCategory = await tool(host, TOOL_NAMES.template).execute({ category: 'architecture' }, {}) as { templates: Array<{ category: string }> }
+      expect(byCategory.templates.every(entry => entry.category === 'architecture')).toBe(true)
+      await expect(tool(host, TOOL_NAMES.template).execute({ category: 'nope' }, {})).rejects.toThrow(/unknown template category/u)
+      await expect(tool(host, TOOL_NAMES.template).execute({ id: 'nope/nope' }, {})).rejects.toThrow(/unknown template/u)
+    } finally {
+      rmSync(tmp, { recursive: true, force: true })
+    }
+  })
+
+  it('instantiates a template into the workspace without overwriting', async () => {
+    const tmp = mkdtempSync(join(tmpdir(), 'drawio-chat-'))
+    try {
+      const host = fakeHost(tmp)
+      apply(host.ctx)
+      const first = await tool(host, TOOL_NAMES.template).execute({ id: 'flow/login' }, { agent: {} }) as { action: string; path: string; revision: string; templateId: string; title: string; bytes: number; category: string }
+      expect(first.action).toBe('created')
+      expect(first.templateId).toBe('flow/login')
+      expect(first.category).toBe('flowchart')
+      expect(first.title.length).toBeGreaterThan(0)
+      expect(first.revision).toMatch(/^[0-9a-f]{40}$/u)
+      expect(first.path.startsWith(join(tmp, 'diagrams'))).toBe(true)
+      const xml = readFileSync(first.path, 'utf8')
+      expect(Buffer.byteLength(xml, 'utf8')).toBe(first.bytes)
+      expect(xml).toContain('<mxGraphModel')
+      // The next instantiation of the same template picks a fresh name.
+      const second = await tool(host, TOOL_NAMES.template).execute({ id: 'flow/login' }, { agent: {} }) as { path: string }
+      expect(second.path).not.toBe(first.path)
+      expect(existsSync(second.path)).toBe(true)
+      // An explicit target is never overwritten.
+      const explicit = join(tmp, 'diagrams', 'custom.drawio')
+      const third = await tool(host, TOOL_NAMES.template).execute({ id: 'flow/login', path: 'diagrams/custom.drawio' }, { agent: {} }) as { path: string }
+      expect(third.path).toBe(explicit)
+      await expect(tool(host, TOOL_NAMES.template).execute({ id: 'flow/login', path: 'diagrams/custom.drawio' }, { agent: {} })).rejects.toThrow(/already exists/u)
+      await expect(tool(host, TOOL_NAMES.template).execute({ id: 'flow/login', path: '../escape.drawio' }, { agent: {} })).rejects.toThrow(/inside the session workspace/u)
+    } finally {
+      rmSync(tmp, { recursive: true, force: true })
+    }
+  })
+
+  it('searches and instantiates templates from a remote catalog', async () => {
+    const tmp = mkdtempSync(join(tmpdir(), 'drawio-chat-'))
+    const remoteXml = '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="n1" value="看板" vertex="1" parent="1"><mxGeometry x="10" y="10" width="100" height="40" as="geometry"/></mxCell></root></mxGraphModel>'
+    const remoteCatalog = {
+      version: 1,
+      categories: [{ id: 'community', title: { zh: '社区模板', en: 'Community' } }],
+      templates: [{
+        id: 'community/kanban',
+        file: 'kanban.drawio',
+        category: 'community',
+        title: { zh: '看板模板', en: 'Kanban' },
+        description: { zh: '来自社区目录的看板模板', en: 'A community kanban template' },
+        tags: ['看板', 'kanban'],
+      }],
+    }
+    const fetchMock = vi.fn(async (input: unknown) => {
+      const url = String(input)
+      if (url.endsWith('/catalog.json')) return new Response(JSON.stringify(remoteCatalog), { status: 200 })
+      return new Response(remoteXml, { status: 200 })
+    })
+    vi.stubGlobal('fetch', fetchMock)
+    try {
+      const host = fakeHost(tmp)
+      apply(host.ctx)
+      const catalogUrl = 'https://templates.example.com/host-tool-test/catalog.json'
+      const listed = await tool(host, TOOL_NAMES.template).execute({ catalog: catalogUrl }, { agent: {} }) as { total: number; templates: Array<{ id: string; source: string }>; text: string }
+      expect(listed.total).toBeGreaterThanOrEqual(13)
+      expect(listed.templates.map(entry => entry.id)).toContain('community/kanban')
+      expect(listed.templates.find(entry => entry.id === 'community/kanban')?.source).toBe('remote')
+      expect(listed.text).toContain('[远程]')
+      const created = await tool(host, TOOL_NAMES.template).execute({ catalog: catalogUrl, id: 'community/kanban' }, { agent: {} }) as { path: string; source: string; templateId: string }
+      expect(created.source).toBe('remote')
+      expect(created.templateId).toBe('community/kanban')
+      expect(readFileSync(created.path, 'utf8')).toBe(remoteXml)
+      // A broken catalog URL only degrades a listing (built-in templates remain)…
+      const degraded = await tool(host, TOOL_NAMES.template).execute({ catalog: 'http://templates.example.com/catalog.json' }, {}) as { total: number; text: string }
+      expect(degraded.total).toBe(12)
+      expect(degraded.text).toContain('远程模板目录拉取失败')
+      expect(degraded.text).toContain('HTTPS')
+      // …while instantiating an explicit id reports the failure.
+      await expect(tool(host, TOOL_NAMES.template).execute({ catalog: 'http://templates.example.com/catalog.json', id: 'community/kanban' }, {})).rejects.toThrow(/HTTPS/u)
+      await expect(tool(host, TOOL_NAMES.template).execute({ catalog: catalogUrl, id: 'community/missing' }, {})).rejects.toThrow(/unknown template/u)
+    } finally {
+      vi.unstubAllGlobals()
+      rmSync(tmp, { recursive: true, force: true })
+    }
+  })
+
   it('keeps every tool result inside its declared output schema', async () => {
     const tmp = mkdtempSync(join(tmpdir(), 'drawio-chat-'))
     try {
@@ -229,11 +329,15 @@ describe('host apply', () => {
       const read = await tool(host, TOOL_NAMES.read).execute({ path: created.path as string }, { agent: {} }) as Record<string, unknown>
       const applied = await tool(host, TOOL_NAMES.apply).execute({ path: created.path, ops: [{ op: 'addNode', id: 'n2', label: 'Home', x: 200, y: 40 }] }, { agent: {} }) as Record<string, unknown>
       const undone = await tool(host, TOOL_NAMES.undo).execute({ path: created.path }, { agent: {} }) as Record<string, unknown>
+      const templateListed = await tool(host, TOOL_NAMES.template).execute({}, { agent: {} }) as Record<string, unknown>
+      const templateCreated = await tool(host, TOOL_NAMES.template).execute({ id: 'flow/login' }, { agent: {} }) as Record<string, unknown>
       const results: Array<[string, Record<string, unknown>]> = [
         [TOOL_NAMES.create, created],
         [TOOL_NAMES.read, read],
         [TOOL_NAMES.apply, applied],
         [TOOL_NAMES.undo, undone],
+        [TOOL_NAMES.template, templateListed],
+        [TOOL_NAMES.template, templateCreated],
       ]
       for (const [name, value] of results) {
         const schema = tool(host, name).output?.schema

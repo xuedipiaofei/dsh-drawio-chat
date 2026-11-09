@@ -1,0 +1,158 @@
+<mxGraphModel dx="900" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="920" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="title" value="线上故障排查决策树" style="text;html=1;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;fontColor=#1F2937;" vertex="1" parent="1">
+      <mxGeometry x="40" y="10" width="300" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="start" value="告警触发" style="ellipse;whiteSpace=wrap;html=1;fontSize=16;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="480" y="30" width="120" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="d1" value="服务是否&lt;br&gt;可用?" style="rhombus;whiteSpace=wrap;html=1;fontSize=15;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="460" y="130" width="160" height="90" as="geometry" />
+    </mxCell>
+    <mxCell id="d2" value="依赖是否&lt;br&gt;超时?" style="rhombus;whiteSpace=wrap;html=1;fontSize=15;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="460" y="270" width="160" height="90" as="geometry" />
+    </mxCell>
+    <mxCell id="d3" value="资源是否&lt;br&gt;打满?" style="rhombus;whiteSpace=wrap;html=1;fontSize=15;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="460" y="410" width="160" height="90" as="geometry" />
+    </mxCell>
+    <mxCell id="a1" value="实例扩容&lt;br&gt;&lt;small&gt;重启异常 Pod&lt;/small&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fontSize=16;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="220" y="140" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="a2" value="依赖治理&lt;br&gt;&lt;small&gt;熔断 / 降级 / 重试&lt;/small&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fontSize=16;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="720" y="280" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="a3" value="缓存与数据库&lt;br&gt;&lt;small&gt;慢查询 / 命中率&lt;/small&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fontSize=16;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="220" y="420" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="a4" value="网络与 DNS&lt;br&gt;&lt;small&gt;链路 / 解析排查&lt;/small&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fontSize=16;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="720" y="420" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="v1" value="验证服务恢复" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fontSize=16;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="40" y="250" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="v2" value="验证依赖恢复" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fontSize=16;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="900" y="280" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="v3" value="验证数据层恢复" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fontSize=16;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="40" y="420" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="v4" value="验证网络恢复" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fontSize=16;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="900" y="420" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="escalate" value="升级值班&lt;br&gt;&lt;small&gt;人工介入&lt;/small&gt;" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fontSize=16;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=1.5;" vertex="1" parent="1">
+      <mxGeometry x="470" y="640" width="140" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="end" value="结束" style="ellipse;whiteSpace=wrap;html=1;fontSize=16;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="480" y="810" width="120" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="note" value="排查顺序&lt;br&gt;可用性 → 依赖 → 资源&lt;br&gt;验证未恢复则升级值班" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#f5f5f5;strokeColor=#9CA3AF;fontSize=13;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;fontColor=#374151;" vertex="1" parent="1">
+      <mxGeometry x="240" y="530" width="170" height="90" as="geometry" />
+    </mxCell>
+    <mxCell id="e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;" edge="1" parent="1" source="start" target="d1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e2" value="是" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;fontColor=#2D7600;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="d1" target="d2">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e3" value="否" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5833;fontColor=#B20000;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="d1" target="a1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e4" value="是" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5833;fontColor=#2D7600;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="d2" target="a2">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e5" value="否" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;fontColor=#B20000;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="d2" target="d3">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e6" value="是" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5833;fontColor=#2D7600;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="d3" target="a3">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e7" value="否" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5833;fontColor=#B20000;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="d3" target="a4">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=0;exitY=0.5;entryX=0.5;entryY=0;" edge="1" parent="1" source="a1" target="v1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="110" y="170" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="a2" target="v2">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="a3" target="v3">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e11" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="a4" target="v4">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e12" value="已恢复" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=0;exitY=0.5;entryX=0;entryY=0.6;fontColor=#2D7600;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="v1" target="end">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="30" y="280" />
+          <mxPoint x="30" y="840" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e13" value="未恢复" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#B20000;endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.833;fontColor=#B20000;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="v1" target="escalate">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="200" y="280" />
+          <mxPoint x="200" y="690" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e14" value="已恢复" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0;entryY=0.2;fontColor=#2D7600;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="v3" target="end">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="110" y="820" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e15" value="未恢复" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#B20000;endArrow=block;endFill=1;exitX=0.5;exitY=0;entryX=0;entryY=0.5;fontColor=#B20000;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="v3" target="escalate">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="110" y="390" />
+          <mxPoint x="430" y="390" />
+          <mxPoint x="430" y="670" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e16" value="已恢复" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=1;entryY=0.6;fontColor=#2D7600;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="v2" target="end">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1070" y="310" />
+          <mxPoint x="1070" y="840" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e17" value="未恢复" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#B20000;endArrow=block;endFill=1;exitX=0;exitY=0.5;entryX=0.5;entryY=0;fontColor=#B20000;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="v2" target="escalate">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="870" y="310" />
+          <mxPoint x="870" y="620" />
+          <mxPoint x="540" y="620" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e18" value="已恢复" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=1;entryY=0.2;fontColor=#2D7600;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="v4" target="end">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="970" y="820" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e19" value="未恢复" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#B20000;endArrow=block;endFill=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;fontColor=#B20000;fontSize=14;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="v4" target="escalate">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="890" y="450" />
+          <mxPoint x="890" y="670" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e20" value="人工处理" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#475569;endArrow=block;endFill=1;fontSize=14;fontColor=#475569;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="escalate" target="end">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

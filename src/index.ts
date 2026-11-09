@@ -7,6 +7,8 @@
  *                      revision) instead of raw XML;
  * - `drawio_apply`     change an existing file with semantic ops, atomically;
  * - `drawio_undo`      restore the previous version of a file this process wrote;
+ * - `drawio_template`  list the built-in scenario templates and instantiate one
+ *                      as a workspace `.drawio` file;
  * - `drawio_reference` fetch draw.io's XML reference from the public MCP endpoint
  *                      (no auth; only the reference travels, never the diagram).
  *
@@ -29,6 +31,16 @@ import {
   type DiagramSummary,
 } from './model/diagram.ts'
 import { applyOps, type DiagramOp } from './model/ops.ts'
+import {
+  fetchRemoteCatalog,
+  fetchTemplateXml,
+  listEntry,
+  loadCatalog,
+  mergeCatalogs,
+  renderCatalogText,
+  searchTemplates,
+  type TemplateListEntry,
+} from './model/templates.ts'
 import { SnapshotStore } from './model/undo.ts'
 
 /** Stable cordis plugin name (matches the package name). */
@@ -52,6 +64,7 @@ export const TOOL_NAMES = {
   read: 'drawio_read',
   apply: 'drawio_apply',
   undo: 'drawio_undo',
+  template: 'drawio_template',
   reference: 'drawio_reference',
 } as const
 
@@ -72,6 +85,30 @@ const knownFiles = new Set<string>()
 
 /** One tool definition, structurally compatible with `ctx.tools.register`. */
 type ToolDefinition = Record<string, unknown>
+
+/** Value `drawio_template` returns after copying a template into the workspace. */
+type TemplateCreatedValue = {
+  action: 'created'
+  templateId: string
+  title: string
+  path: string
+  revision: string
+  bytes: number
+  category: string
+  source: 'builtin' | 'remote'
+}
+
+/** Value `drawio_template` returns when it only lists or searches the catalog. */
+type TemplateListedValue = {
+  action: 'listed'
+  total: number
+  templates: TemplateListEntry[]
+  categories: Array<{ id: string; title: string }>
+  text: string
+}
+
+/** Value `drawio_template` returns. */
+type TemplateToolValue = TemplateCreatedValue | TemplateListedValue
 
 /** Value `drawio_read` returns: structure fields plus the revision token. */
 type ReadToolValue = Pick<DiagramSummary, 'pages' | 'nodeCount' | 'edgeCount' | 'truncated'> & {
@@ -548,6 +585,108 @@ export function apply(ctx: Context): void {
       lastByCwd.set(target.cwd, target.path)
       knownFiles.add(target.path)
       return { path: target.path, revision: revisionOf(previous), restored: true }
+    },
+  })
+
+  tools.register({
+    name: TOOL_NAMES.template,
+    description: 'Find a draw.io scenario template and copy it into the workspace as a .drawio file. Without `id` it lists/searches the catalog (optional `query` and `category`); with `id` it instantiates that template and renders the diagram card. The built-in catalog ships 12 Chinese scenario templates; pass `catalog` (an HTTPS URL of a remote catalog.json, e.g. the template gallery site) to also search/instantiate community templates. Prefer a template when the user asks for a common diagram type — login/approval/checkout flows, CI/CD, microservices, deployment architecture, ETL, ER model, sequence diagram, org chart, swimlane — then edit it with drawio_read / drawio_apply instead of drawing it from scratch.',
+    parameters: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        id: { type: 'string', description: 'Template id to instantiate, e.g. "flow/login". Omit to list or search templates.' },
+        query: { type: 'string', description: 'Keywords for searching the catalog (matches id, titles, descriptions, tags, category; Chinese substrings work).' },
+        catalog: { type: 'string', description: 'Optional public HTTPS URL of a remote catalog.json (e.g. the draw.io template gallery). Its entries are merged after the built-in ones and can be instantiated the same way.' },
+        category: { type: 'string', description: 'Category id to filter by: flowchart, architecture, data, sequence, org, swimlane.' },
+        path: { type: 'string', description: 'Workspace-relative target .drawio path for the instantiated template. Defaults to diagrams/<template-id>.drawio; an existing file is never overwritten here.' },
+        title: { type: 'string', description: 'Optional title for the created diagram (defaults to the template title).' },
+      },
+    },
+    output: {
+      schema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          action: { type: 'string', enum: ['listed', 'created'] },
+          total: { type: 'integer' },
+          templates: { type: 'array' },
+          categories: { type: 'array' },
+          text: { type: 'string' },
+          templateId: { type: 'string' },
+          title: { type: 'string' },
+          path: { type: 'string' },
+          revision: { type: 'string' },
+          bytes: { type: 'integer' },
+          category: { type: 'string' },
+          source: { type: 'string' },
+        },
+        required: ['action'],
+      },
+      render: (_args: unknown, value: TemplateToolValue) => [{
+        type: 'text',
+        text: value.action === 'listed'
+          ? value.text
+          : `Created "${value.title}" from template ${value.templateId} at ${value.path} (revision ${value.revision.slice(0, 12)}). Use drawio_read / drawio_apply to customize it.`,
+      }],
+      presentationMeta: (_args: unknown, value: TemplateToolValue) => value.action === 'listed'
+        ? { action: 'listed' }
+        : { action: 'created', title: value.title, path: value.path, revision: value.revision, templateId: value.templateId },
+    },
+    execute: async (args: { id?: unknown; query?: unknown; category?: unknown; catalog?: unknown; path?: unknown; title?: unknown }, exec: { agent?: unknown; signal?: unknown }) => {
+      const catalog = loadCatalog()
+      const catalogUrl = typeof args.catalog === 'string' ? args.catalog.trim() : ''
+      const id = typeof args.id === 'string' ? args.id.trim() : ''
+      if (id === '') {
+        const query = typeof args.query === 'string' ? args.query.trim() : ''
+        const category = typeof args.category === 'string' ? args.category.trim() : ''
+        const filters = { ...(query === '' ? {} : { query }), ...(category === '' ? {} : { category }) }
+        let merged = catalog
+        let warning: string | undefined
+        if (catalogUrl !== '') {
+          try {
+            merged = mergeCatalogs(catalog, (await fetchRemoteCatalog(catalogUrl)).catalog)
+          } catch (error) {
+            warning = error instanceof Error ? error.message : String(error)
+          }
+        }
+        const entries = searchTemplates(merged, filters)
+        const text = renderCatalogText(merged, entries, filters)
+          + (warning === undefined ? '' : `\n\n注意：远程模板目录拉取失败（${warning}），以上仅列出内置模板。`)
+        return {
+          action: 'listed' as const,
+          total: entries.length,
+          templates: entries.map(listEntry),
+          categories: merged.categories.map(entry => ({ id: entry.id, title: entry.title.zh })),
+          text,
+        }
+      }
+      let entry = catalog.templates.find(candidate => candidate.id === id)
+      if (entry === undefined && catalogUrl !== '') {
+        entry = (await fetchRemoteCatalog(catalogUrl)).catalog.templates.find(candidate => candidate.id === id)
+      }
+      if (entry === undefined) {
+        throw new DiagramError(`unknown template "${id}"; call drawio_template without id (or with query/category) to list the available templates`)
+      }
+      const xml = await fetchTemplateXml(entry)
+      validateXml(xml)
+      readDiagramSource(xml)
+      const cwd = await resolveCwd(ctx, exec)
+      const title = typeof args.title === 'string' && args.title.trim() !== '' ? args.title.trim() : entry.title.zh
+      const explicit = typeof args.path === 'string' && args.path.trim() !== '' ? args.path.trim() : ''
+      let path: string
+      if (explicit !== '') {
+        path = resolveDiagramPath(explicit, cwd)
+        if (existsSync(path)) throw new DiagramError(`target already exists: ${explicit}; pass another path or edit the existing file with drawio_apply`)
+      } else {
+        const base = join(cwd, 'diagrams', `${entry.id.replace(/[^a-z0-9]+/gu, '-')}.drawio`)
+        path = base
+        for (let index = 2; existsSync(path) && index <= 50; index += 1) path = base.replace(/\.drawio$/u, `-${index}.drawio`)
+      }
+      atomicWrite(path, xml)
+      lastByCwd.set(cwd, path)
+      knownFiles.add(path)
+      return { action: 'created' as const, templateId: entry.id, title, path, revision: revisionOf(xml), bytes: Buffer.byteLength(xml, 'utf8'), category: entry.category, source: entry.source ?? 'builtin' }
     },
   })
 

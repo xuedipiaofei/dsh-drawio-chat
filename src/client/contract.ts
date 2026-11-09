@@ -12,6 +12,9 @@
 /** Tool name shared by the host tool and the client tool view. */
 export const TOOL_NAME = 'drawio_create'
 
+/** Tool name of the built-in template catalog / instantiate tool. */
+export const TEMPLATE_TOOL_NAME = 'drawio_template'
+
 /** Public viewer/diagram host (script + stencils, no account required). */
 export const VIEWER_ORIGIN = 'https://viewer.diagrams.net'
 
@@ -75,10 +78,21 @@ export async function editorUrl(xml: string): Promise<string> {
   if (typeof compression !== 'function') return `${EDITOR_ORIGIN}/?pv=0&grid=0#R${prepared}`
   const stream = new compression('deflate-raw')
   const writer = stream.writable.getWriter()
-  const write = writer.write(new TextEncoder().encode(prepared))
-  writer.close()
-  await write
-  const compressed = new Uint8Array(await new Response(stream.readable).arrayBuffer())
+  // Drain the readable side CONCURRENTLY with the write. The transform applies
+  // backpressure, so a write awaited before anyone reads the readable side can
+  // deadlock forever (observed in Chrome 156: clicking "Open in draw.io" would
+  // hang without opening a tab). Reading first keeps the pipe flowing.
+  const compressedPromise = new Response(stream.readable).arrayBuffer()
+  const bytes = new TextEncoder().encode(prepared)
+  try {
+    await writer.write(bytes)
+    await writer.close()
+  } catch (error) {
+    // Never leave the pending read unhandled when the writer fails.
+    void compressedPromise.catch(() => {})
+    throw error
+  }
+  const compressed = new Uint8Array(await compressedPromise)
   return `${EDITOR_ORIGIN}/?pv=0&grid=0#R${encodeURIComponent(bytesToBase64(compressed))}`
 }
 

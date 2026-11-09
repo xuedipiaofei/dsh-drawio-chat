@@ -34,8 +34,8 @@
         "zh": "Draw.io 聊天图表"
       },
       "description": {
-        "en": "draw.io diagrams inline in the chat: the agent creates the diagram, an interactive draw.io viewer renders right in the transcript, and the agent can later read, edit and undo changes to the same .drawio file. No draw.io account, no npx MCP server, no local editor install. The right sidebar previews .drawio files instead of showing raw XML.",
-        "zh": "聊天内联的 draw.io 图表：模型创建图表，聊天里直接出现可交互的 draw.io 视图，之后还能读取、改图和撤销同一个 .drawio 文件。不登录 draw.io、不需要 npx MCP server、不用装本地编辑器。右侧栏可直接预览 .drawio（不再是 XML 文本）。"
+        "en": "draw.io diagrams inline in the chat, plus a built-in catalog of scenario templates. Ask in plain language (\"draw a login flow\", \"use the microservices template\"): the model creates or instantiates a diagram, an interactive draw.io viewer renders right in the transcript, and later edits / undo keep working on the same .drawio file. No draw.io account, no npx MCP server, no local editor. The right sidebar previews .drawio files instead of showing raw XML.",
+        "zh": "聊天内联的 draw.io 图表，并内置场景模板库。直接用自然语言提需求（「画一个登录流程」「用微服务模板画一张」）：模型创建或从模板实例化图表，聊天里出现可交互的 draw.io 视图，之后还能继续改图/撤销同一个 .drawio 文件。不登录 draw.io、不需要 npx MCP server、不用装本地编辑器。右侧栏可直接预览 .drawio（不再是 XML 文本）。"
       },
       "author": "xuedipiaofei",
       "homepage": "https://github.com/xuedipiaofei/dsh-drawio-chat",
