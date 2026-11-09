@@ -8,6 +8,8 @@ The **chat-first** draw.io plugin for DeepSeek Harness. The model creates, inspe
 - A **catalog of scenario templates** ships with the plugin (a static gallery site can be published from the same manifest), and the canvas integrates as a file viewer in `dsh-better-sidebar` when that plugin is installed.
 - Tools only touch `.drawio` files under the session workspace; writes are atomic.
 
+**Links** — [Template gallery](https://xuedipiaofei.github.io/dsh-drawio-chat/) · [npm](https://www.npmjs.com/package/dsh-drawio-chat) · [Marketplace entry](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin)
+
 ## How to use
 
 The card is the result, not the entrance: start a conversation and describe the diagram you want.

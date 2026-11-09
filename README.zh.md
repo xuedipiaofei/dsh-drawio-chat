@@ -8,6 +8,8 @@ DeepSeek Harness 的**聊天优先** draw.io 插件：模型创建、读取和�
 - 内置**场景模板库**，并可发布同源的模板站；装了 `dsh-better-sidebar` 时，画布还会注册成它的 `.drawio` 文件查看器。
 - 工具只能读写会话工作区内的 `.drawio` 文件；写入是原子的。
 
+**链接** —— [在线模板站](https://xuedipiaofei.github.io/dsh-drawio-chat/) · [npm](https://www.npmjs.com/package/dsh-drawio-chat) · [社区市场条目](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin)
+
 ## 怎么用
 
 卡片是**结果**而不是入口：装好插件、重启 App 后，直接开一个对话描述你要的图即可。
