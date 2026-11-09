@@ -3,11 +3,9 @@
 The repo has the publishable package (`dsh-drawio-chat`), a market entry and
 an OIDC publish workflow.
 
-**Status (2026-11-06):** npm `dsh-drawio-chat@0.2.2` is published, the GitHub
-repository is live at `github.com/xuedipiaofei/dsh-drawio-chat`, and the
-community-list submission is [PR #12711](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12711)
-— waiting for the repository-age gate (repos must be 1 day old; it re-runs
-automatically). The steps below stay as the release runbook.
+**Status (2026-11-09):** npm `dsh-drawio-chat@0.4.0` is published (manual publish with npm web 2FA; the OIDC trusted-publisher route is still unverified). GitHub `v0.4.0` is tagged and pushed, and the template gallery in `site/` deploys to GitHub Pages from `.github/workflows/pages.yml`. The 0.3.0 release added the built-in scenario template catalog and the `drawio_template` tool; 0.2.2 remains the last release with a provenance-less manual publish record. The community-list PR #12711 is merged; the official workshop listing is pending.
+
+The steps below stay as the release runbook.
 
 ## 1. GitHub repository
 

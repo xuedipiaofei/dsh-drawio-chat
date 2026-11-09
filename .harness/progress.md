@@ -101,3 +101,5 @@
 - 站点验证：build 16 文件、本地 200/304、桌面/手机/搜索截图通过（/tmp/site-home.png 等），12 模板预览出图；站点 catalog 经插件 `validateCatalog(remote)` 校验 12/12。
 - 已预装 0.4.0 到 desktop profile（lib/templates/package.json，备份 `*.bak-before-0.3.0` 之前版本 + 本次 0.4.0 覆盖）；用户 ⌘Q 重启后生效（新 host 工具 `catalog` 参数 + better-sidebar 查看器）。
 - 下一步（用户侧）：仓库 Settings→Pages 选 GitHub Actions 发布模板站；`npm publish` 0.4.0 并打 tag；可选：站点暗色主题/缩略图缓存、模板扩到 20+、贡献指南。
+- 2026-11-09 17:53 发布：release commit c61359d + tag v0.4.0 已推送；GitHub publish workflow 到 publish 步失败（未配置 npm trusted publisher，OIDC 不可用）；随后用户用 npm web 2FA（webauthn）手动发布成功：npm `dsh-drawio-chat@0.4.0`（17:53:45 +08，dist-tags latest=0.4.0，sha512 ddu3I7f…/NC/zWw==，41 文件 / 379.2 kB unpacked）；首跑 Pages workflow 因未开启 Pages 失败，用户已在 Settings→Pages 把 Source 设为 GitHub Actions。
+- 发布后记录：market/index.json 增加 0.4.0 版本条目（publishTimestamp 1794218025）；PUBLISHING.md 状态更新为 0.4.0；.harness/publish-status.json 已更新（保持未跟踪）。待验证：Pages 站点可访问性 + 两个 workflow 最终状态；可选后续：给 npm 配 Trusted publishing（repo + publish.yml）让推 tag 自动带 provenance 发布。
